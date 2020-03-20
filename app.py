@@ -9,7 +9,7 @@ socketio = SocketIO(app)
 
 # room properties: id, name, admin_r_number, time start, time end, ip_list, current_users_num, current_uniqe_ip_num, {qustions dictionary} 
 user_rooms = {}
-admiin_rooms_dict = {} # {admin_r_number: r_number}
+admin_rooms_dict = {} # {admin_r_number: r_number}
 ROOM_SKELETON = {
     "name": None,
     "admin_r_number": None,
