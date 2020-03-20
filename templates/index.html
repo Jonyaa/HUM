@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+
+{% block body %}
+<section class="left">
+    <img src="../static/img/svg/logo.svg" alt="logo" class="logo">
+    <p class="info">
+        Authoritatively foster low-risk high-yield 
+        infrastructures vis-a-vis ubiquitous communities. 
+        Compellingly facilitate economically sound leadership 
+        skills and timely action items. Seamlessly redefine 
+        intermandated systems via one-to-one data.Lorem ipsum 
+        dolor sit amet, consectetuer adipiscing elit, sed diam 
+        nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat 
+        volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation 
+    </p>
+</section>
+<section class="right">
+    <h1 class="title">HUM</h1>
+    <div class="btn_wrapper">
+        <button class="room_btn" onclick="join_room()">JOIN A ROOM</button>
+        <button class="room_btn" onclick="create_room()">CREATE A ROOM</button>
+    </div>
+    <div class="form_wrap">
+        <img src="../static/img/svg/x.svg" alt="Close Panel" class="close_panel" onclick="join_room()">
+        <form action="enter_room" method="post" autocomplete="off" class="join_form">
+            <div class="inputs_wrapper">
+                <input type="text" name="r_number" id="r_number" placeholder="ROOM NUMBER"> <!-- "r" is for room -->
+                <div class="checkbox_wrapper"><input type="checkbox" name="admin" id="admin_checkbox"><label for="admin">I'm an admin</label></div>
+                <input type="password" name="r_password" id="r_password" placeholder="ROOM PASSWORD">
+                </div>
+            <input type="submit" value="JOIN">
+        </form>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

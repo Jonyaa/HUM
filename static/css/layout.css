@@ -1,0 +1,10 @@
+:root {
+    --brown-bg: rgb(34,31,31);
+    --yellow-hl: rgb(251,208,78)
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;;
+}

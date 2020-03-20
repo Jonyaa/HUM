@@ -12,7 +12,7 @@ rooms = {}
 
 @app.route('/')
 def index():
-    return render_template('landing.html')
+    return render_template('index.html', title="HUM")
 
 # Join room 
 @app.route("/enter_room")
