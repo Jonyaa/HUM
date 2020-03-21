@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect, make_response, request
+from flask import Flask, render_template, request, redirect, make_response, request, abort
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from time import time
 import random
+from models.classes import Room
 from models.functions import get_random_url
 
 app = Flask(__name__)
@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 # room properties: id, name, admin_r_number, time start, time end, ip_list, current_users_num, current_uniqe_ip_num, {qustions dictionary} 
-user_rooms = {}
+rooms = {} # room id: room object
 admin_rooms_dict = {} # {admin_r_number: r_number}
 ROOM_SKELETON = {
     "name": None,
@@ -21,28 +21,12 @@ ROOM_SKELETON = {
     "current_uniqe_ip_num": None,
     "qustions_dictionary": {}
 }
-
-
-def create_room(r_number, name, duration):
-    #Create room and admin room
-    user_rooms.update({r_number: ROOM_SKELETON})
-    user_rooms[r_number]["name"] = name
-    user_rooms[r_number]["time_start"] = time()
-    user_rooms[r_number]["time_end"] = (time() + duration)
-    
-    admin_r_number = random.randint(10000,100000)
-    # In case there is already admin room nuber like this one
-    while admin_rooms_dict[admin_r_number] != None:
-        admin_r_number = random.randint(10000,100000)
-    user_rooms[r_number]["admin_r_number"] = admin_r_number    
-    admin_rooms_dict[admin_r_number] = r_number
-
-
     
 
 def delete_room(r_number):
-    user_rooms[r_number] = ROOM_SKELETON
+    rooms[r_number] = ROOM_SKELETON
     admin_rooms_dict[r_number] = None
+
 
 @app.route('/')
 def index():
@@ -51,15 +35,42 @@ def index():
 
 
 @app.route('/room/<room_id>')
-def test_room(room_id):
-    return room_id
+def enter_room(room_id):
+    if room_id in rooms:
+        return render_template('client_room.html', title=rooms[room_id].name)
+    else:
+        return abort(404)
 
-# Join room 
-@app.route("/enter_room", methods=["POST"])
-def enter_room():
-    r_number = request.form.get('r_number')
-    user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    return render_template('index.html', title="HUM")
+
+@app.route('/admin/<admin_room_id>')
+def enter_admin_room(admin_room_id):
+    for room_id in rooms:
+        if admin_room_id == rooms[room_id].admin_id:
+            return render_template('admin_room.html', title=rooms[room_id].name + ' - Admin', room=rooms[room_id])
+
+
+@app.route("/create_room", methods=["POST", "GET"])
+def create_room():
+    if request.method == "POST":
+        # Get from form the room name and room expiry (if filled, else just put "6" - default hours number)
+        r_name = request.form.get('r_name')
+        r_expiry = request.form.get('r_expiry') if request.form.get('r_expiry') else "6"
+        r_id = get_random_url()
+        r_admin_id = get_random_url()
+        rooms[r_id] = Room(r_id, r_name, r_expiry, r_admin_id)
+        return redirect('/admin/'+r_admin_id)
+    else:
+        return redirect('/')
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+   return render_template('404.html', title = '404'), 404
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 8000, debug=True)
+
+# Save For later, no need now:
+
+# user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)

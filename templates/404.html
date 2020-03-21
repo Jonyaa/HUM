@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    body {
+        background-color: var(--brown-bg);
+    }
+    h1 {
+        color: var(--yellow-hl);
+        font-size: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 900;
+        white-space: nowrap;
+        text-shadow: 6px 6px 0px darkgoldenrod;
+    }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<h1 class="main_title">404;<br>ROOM<br>NOT<br>FOUND.</h1>
+
+{% endblock %}
