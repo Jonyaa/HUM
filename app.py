@@ -37,7 +37,7 @@ def index():
 @app.route('/room/<room_id>')
 def enter_room(room_id):
     if room_id in rooms:
-        return render_template('client_room.html', title=rooms[room_id].name)
+        return render_template('client_room.html', title="HUM - " + rooms[room_id].name)
     else:
         return abort(404)
 
@@ -46,7 +46,7 @@ def enter_room(room_id):
 def enter_admin_room(admin_room_id):
     for room_id in rooms:
         if admin_room_id == rooms[room_id].admin_id:
-            return render_template('admin_room.html', title=rooms[room_id].name + ' - Admin', room=rooms[room_id])
+            return render_template('admin_room.html', title="HUM - " + rooms[room_id].name + ' - Admin', room=rooms[room_id])
 
 
 @app.route("/create_room", methods=["POST", "GET"])
@@ -55,6 +55,9 @@ def create_room():
         # Get from form the room name and room expiry (if filled, else just put "6" - default hours number)
         r_name = request.form.get('r_name')
         r_expiry = request.form.get('r_expiry') if request.form.get('r_expiry') else "6"
+        
+        #Hours to minutes
+        time_end = (r_expiry * 3600) 
         r_id = get_random_url()
         r_admin_id = get_random_url()
         rooms[r_id] = Room(r_id, r_name, r_expiry, r_admin_id)
@@ -66,6 +69,27 @@ def create_room():
 @app.errorhandler(404)
 def page_not_found(error):
    return render_template('404.html', title = '404'), 404
+
+
+## Socket.io Config
+
+
+@socketio.on('connect')
+def connect():
+    # Still need connect it to the rooms model
+    #join_room(r_number)
+
+    # Send room property: time, analytics, questions
+    emit("system_update")
+    
+
+@socketio.on('disconnecting')
+def disconnecting():
+    #Remove user from room dictionary
+    #leave_room(r_number)
+    emit("system_update")
+
+
 
 
 if __name__ == "__main__":
