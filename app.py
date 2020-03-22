@@ -46,7 +46,8 @@ def enter_room(room_id):
 def enter_admin_room(admin_room_id):
     for room_id in rooms:
         if admin_room_id == rooms[room_id].admin_id:
-            return render_template('admin_room.html', title="HUM - " + rooms[room_id].name + ' - Admin', room=rooms[room_id])
+            return render_template('admin_room.html', title="HUM - " + rooms[room_id].name + ' - Admin',
+             room=rooms[room_id])
 
 
 @app.route("/create_room", methods=["POST", "GET"])
@@ -81,13 +82,25 @@ def connect():
 
     # Send room property: time, analytics, questions
     emit("system_update")
-    
+
 
 @socketio.on('disconnecting')
 def disconnecting():
     #Remove user from room dictionary
     #leave_room(r_number)
     emit("system_update")
+
+@socketio.on("join_admin_room")
+def join_admin_room(admin_r_number):
+    # Add admin as a listener to the socketio room 
+    user_r_number = admin_rooms_dict[admin_r_number]
+    join_room(user_r_number)
+
+@socketio.on("join_user_room")
+def join_user_room(user_r_number):
+    join_room(user_r_number)
+
+
 
 
 

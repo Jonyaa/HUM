@@ -9,5 +9,12 @@ class Room:
         self.admin_id = admin_id
         self.questions = {}
     
-    def set_question(self):
-        pass
+    def set_question(self, header, desc,
+        answer_1, answer_2, answer_3, answer_4):
+        self.header = header
+        self.desc = desc
+        self.answer_1 = answer_1
+        self.answer_2 = answer_2
+        self.answer_3 = answer_3
+        self.answer_4 = answer_4
+        total_answers = [0, 0, 0, 0] # [2,14,0,0] Means that answer 1 fot 2 hums, answer 2 got 14 hums
