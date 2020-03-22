@@ -7,6 +7,7 @@
 
 
 {% block body %}
+<script>var r_id = "{{ room.id }}";</script>
 <script src="{{ url_for('static', filename='js/admin_room.js') }}"></script>
 
 <h1>Admin URL - http://localhost:8000/admin/{{ room.admin_id }}</h1>

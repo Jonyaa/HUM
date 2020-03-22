@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, send, emit, join_room, leave_room
 import random
 from models.classes import Room
 from models.functions import get_random_url
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -11,7 +12,7 @@ socketio = SocketIO(app)
 
 rooms = {} # {room id: room object}
 admin_rooms_dict = {} # {admin_r_number: r_number}
-
+rooms["a"] = Room("a", "a", time.time() + (6 * 3600), "b") #For test purpose only
 
 @app.route('/')
 def index():
@@ -43,10 +44,11 @@ def create_room():
         r_expiry = request.form.get('r_expiry') if request.form.get('r_expiry') else "6"
         
         #Hours to minutes
-        time_end = (r_expiry * 3600) 
+        time_end = (time.time() + (int(r_expiry) * 3600))
         r_id = get_random_url()
         r_admin_id = get_random_url()
-        rooms[r_id] = Room(r_id, r_name, r_expiry, r_admin_id)
+        rooms[r_id] = Room(r_id, r_name, time_end, r_admin_id)
+        admin_rooms_dict[r_admin_id] = r_id
         return redirect('/admin/'+r_admin_id)
     else:
         return redirect('/')
@@ -62,37 +64,40 @@ def page_not_found(error):
 
 @socketio.on('connect')
 def connect():
-    # Send room property: time, analytics, questions
-    emit("system_update")
+    print("New connection")
 
-@socketio.on("join_user_room")
+
+@socketio.on("join_user_to_room")
 def join_user_to_room(r_id):
+    r_id = r_id
     # Add user / admin to the room broadcast
     # Update room object
 
     user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     join_room(r_id)
-    rooms[r_id].total_connection += 1
+    rooms[r_id].total_connections += 1
     rooms[r_id].ip_list.append(user_ip)
     num_of_uniqe_ip = len(set(rooms[r_id].ip_list))
 
     #Send room's users the current nuber of connections
-    emit("user_status_update", {"total_connection": rooms[r_id].total_connection,
+    emit("user_status_update", {"total_connections": rooms[r_id].total_connections,
          "num_of_uniqe_ip":num_of_uniqe_ip}, room=r_id)
+    print("User connected to room "+  r_id)
 
 @socketio.on('disconnecting')
 def disconnecting(r_id):
+    r_id = r_id
     # Add user / admin to the room broadcast
     # Update room object
 
     user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    leave_room(r_id)
-    rooms[r_id].total_connection -= 1
+    leave_room(r_id) #Raise an error
+    rooms[r_id].total_connections -= 1
     rooms[r_id].ip_list.remove(user_ip)
     num_of_uniqe_ip = len(set(rooms[r_id].ip_list))
 
     #Send room's users the current nuber of connections
-    emit("user_status_update", {"total_connection": rooms[r_id].total_connection,
+    emit("user_status_update", {"total_connections": rooms[r_id].total_connections,
          "num_of_uniqe_ip":num_of_uniqe_ip}, room=r_id)
 
 @socketio.on('admin_changed_time')
@@ -131,3 +136,7 @@ def hum_recived(r_id, question_id, vote):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 8000, debug=True)
+
+
+# To Do:
+# 1. join_admin_to_room_funtion
