@@ -54,7 +54,6 @@ div.q_child {
     overflow: scroll;
     box-sizing: border-box;
     height: 100%;
-
     display: flex;
     flex-flow: column;
     justify-content: flex-start;
