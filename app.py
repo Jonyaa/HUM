@@ -122,7 +122,7 @@ def admin_published_question(r_id, question_id):
 @socketio.on("hum_recived")
 def hum_recived(r_id, question_id, vote):
     # Recived vote from user and update question object, then send users an update
-    rooms[r_id].update_hum(question_id)
+    rooms[r_id].update_hum(question_id, vote)
     total_hums = rooms[r_id].questions[question_id].total_hums
     emit("hum_update", {"total_hums": total_hums} ,room=r_id)
 
