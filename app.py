@@ -8,24 +8,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-# room properties: id, name, admin_r_number, time start, time end, ip_list, current_users_num, current_uniqe_ip_num, {qustions dictionary} 
-rooms = {} # room id: room object
-admin_rooms_dict = {} # {admin_r_number: r_number}
-ROOM_SKELETON = {
-    "name": None,
-    "admin_r_number": None,
-    "time_start": None,
-    "time_end": None,
-    "ip_list": [],
-    "current_users_num": None,
-    "current_uniqe_ip_num": None,
-    "qustions_dictionary": {}
-}
-    
 
-def delete_room(r_number):
-    rooms[r_number] = ROOM_SKELETON
-    admin_rooms_dict[r_number] = None
+rooms = {} # {room id: room object}
+admin_rooms_dict = {} # {admin_r_number: r_number}
 
 
 @app.route('/')
@@ -77,37 +62,72 @@ def page_not_found(error):
 
 @socketio.on('connect')
 def connect():
-    # Still need connect it to the rooms model
-    #join_room(r_number)
-
     # Send room property: time, analytics, questions
     emit("system_update")
 
+@socketio.on("join_user_room")
+def join_user_to_room(r_id):
+    # Add user / admin to the room broadcast
+    # Update room object
+
+    user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    join_room(r_id)
+    rooms[r_id].total_connection += 1
+    rooms[r_id].ip_list.append(user_ip)
+    num_of_uniqe_ip = len(set(rooms[r_id].ip_list))
+
+    #Send room's users the current nuber of connections
+    emit("user_status_update", {"total_connection": rooms[r_id].total_connection,
+         "num_of_uniqe_ip":num_of_uniqe_ip}, room=r_id)
 
 @socketio.on('disconnecting')
-def disconnecting():
-    #Remove user from room dictionary
-    #leave_room(r_number)
-    emit("system_update")
+def disconnecting(r_id):
+    # Add user / admin to the room broadcast
+    # Update room object
 
-@socketio.on("join_admin_room")
-def join_admin_room(admin_r_number):
-    # Add admin as a listener to the socketio room 
-    user_r_number = admin_rooms_dict[admin_r_number]
-    join_room(user_r_number)
+    user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    leave_room(r_id)
+    rooms[r_id].total_connection -= 1
+    rooms[r_id].ip_list.remove(user_ip)
+    num_of_uniqe_ip = len(set(rooms[r_id].ip_list))
 
-@socketio.on("join_user_room")
-def join_user_room(user_r_number):
-    join_room(user_r_number)
+    #Send room's users the current nuber of connections
+    emit("user_status_update", {"total_connection": rooms[r_id].total_connection,
+         "num_of_uniqe_ip":num_of_uniqe_ip}, room=r_id)
 
+@socketio.on('admin_changed_time')
+def admin_changed_time(r_id):
+    # Used when admin add an hour to the room expiry time
+    rooms[r_id].time += 3600
+    emit("time_change_update", {"r_expiry_time": rooms[r_id].time}, room=r_id)
 
+@socketio.on("admin_new_question")
+def admin_new_question(r_id, question_id, question, desc, options):
+    # Create new question object and send an update to the users
+    rooms[r_id].add_question(question_id, question, desc, options)
+    message_content = {"question_id": question_id, "question":question, "desc":desc,}
+    emit("new_question_update", message_content, room=r_id)
+
+@socketio.on("admin_published_question")
+def admin_published_question(r_id, question_id):
+    # Change object status and update users
+    # Send users the question options and the end_time
+    rooms[r_id].update_question_status_voting(question_id)
+    options = rooms[r_id].questions[question_id].options
+    time_end = rooms[r_id].questions[question_id].time_end
+
+    message_content = {"question_id": question_id, "time_end":time_end, "options": options}
+    emit("voting_started", message_content, room=r_id)
+
+@socketio.on("hum_recived")
+def hum_recived(r_id, question_id, vote):
+    # Recived vote from user and update question object, then send users an update
+    rooms[r_id].update_hum(question_id)
+    total_hums = rooms[r_id].questions[question_id].total_hums
+    emit("hum_update", {"total_hums": total_hums} ,room=r_id)
 
 
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 8000, debug=True)
-
-# Save For later, no need now:
-
-# user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)

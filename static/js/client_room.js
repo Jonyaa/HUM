@@ -7,5 +7,5 @@ function join_room(){
 };
 
 window.addEventListener("beforeunload", function () {
-    socket.emit('disconnecting');
+    socket.emit('disconnecting', r_number);
 })
