@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 # room properties: id, name, admin_r_number, time start, time end, ip_list, current_users_num, current_uniqe_ip_num, {qustions dictionary} 
-rooms = {} # room id: room object
+rooms = {1234: Room(1234, "test", 6, 5678)} # room id: room object
 admin_rooms_dict = {} # {admin_r_number: r_number}
 ROOM_SKELETON = {
     "name": None,
@@ -31,7 +31,8 @@ def delete_room(r_number):
 @app.route('/')
 def index():
     print(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
-    return render_template('index.html', title="HUM")
+    # return render_template('index.html', title="HUM")
+    return render_template('admin_room.html', room=rooms[1234])
 
 
 @app.route('/room/<room_id>')

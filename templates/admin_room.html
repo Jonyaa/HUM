@@ -7,9 +7,63 @@
 
 
 {% block body %}
+
+<div class="wrapper">
+    <section class="metadata">
+        <img src="../static/img/svg/logo_white.svg" alt="LOGO" class="logo">
+        <div class="md_text_wrap"> <!-- "md" for metadata -->
+            <h2 class="md_text">ROOM NAME: <span id="room_name">{{room.name}}</span></h2>
+            <h2 class="md_text">ROOM USER URL: <span id="room_user_url">{{room.id}}</span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy"> </h2>
+            <h2 class="md_text">ROOM ADMIN URL: <span id="room_admin_url"></span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy"> </h2>
+            <h2 class="md_text">ROOM LIFETIME: <span id="room_lifetime"></span></h2>
+            <h2 class="md_text">TOTAL CONNECTED: <span id="total_connected"></span></h2>
+            <h2 class="md_text">TOTAL UNIQUE IPS: <span id="total_unique_ips"></span></h2>
+        </div>
+    </section>
+
+    <section class="questions">
+        <div class="q_child" id="pending_questions">
+            <h2>PENDING QUESTIONS:</h2>
+            <div class="pending_questions_wrap">
+                <div class="pending_question">
+                    <h3 class="question">Should we require encryption of all HTTP traffic, as a MUST?</h3>
+                    <div class="pending_question_options">
+                        <h5 class="option">1. Yes</h5>
+                        <h5 class="option">2. Maybe, I don't know</h5>
+                        <h5 class="option">3. No</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="pending_questions_wrap">
+                <div class="pending_question">
+                    <h3 class="question">Should we require encryption of all HTTP traffic, as a MUST?</h3>
+                    <div class="pending_question_options">
+                        <h5 class="option">1. Yes</h5>
+                        <h5 class="option">2. Maybe, I don't know</h5>
+                        <h5 class="option">3. No</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="pending_questions_wrap">
+                <div class="pending_question">
+                    <h3 class="question">Should we require encryption of all HTTP traffic, as a MUST?</h3>
+                    <div class="pending_question_options">
+                        <h5 class="option">1. Yes</h5>
+                        <h5 class="option">2. Maybe, I don't know</h5>
+                        <h5 class="option">3. No</h5>
+                    </div>
+                </div>
+            </div>
+            <img src="../static/img/svg/plus.svg" alt="add question" id="add_question">
+        </div>
+        <div class="q_child" id="on_vote">
+            <h2>ON VOTE:</h2>
+        </div>
+        <div class="q_child" id="finished_voting">
+            <h2>FINISHED VOTING:</h2>
+        </div>
+    </section>
+</div>
+
 <script src="{{ url_for('static', filename='js/admin_room.js') }}"></script>
-
-<h1>Admin URL - http://localhost:8000/admin/{{ room.admin_id }}</h1>
-<h1>Client URL - http://localhost:8000/room/{{ room.id }}</h1>
-
 {% endblock %}
