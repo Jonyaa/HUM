@@ -24,19 +24,19 @@ def index():
 @app.route('/room/<r_id>')
 def enter_room(r_id):
     if r_id in rooms:
-        return render_template('client_room.html', title="HUM - " + rooms[r_id].name)
+        return render_template('client_room.html', title="HUM - " + rooms[r_id].name,room=rooms[r_id])
     else:
         return abort(404)
 
 
-@app.route('/admin/<admin_room_id>')
-def enter_admin_room(admin_room_id):
-    for room_id in rooms:
-        if admin_room_id == rooms[room_id].admin_id:
-            return render_template('admin_room.html', title="HUM - " + rooms[room_id].name + ' - Admin',
-             room=rooms[room_id])
-        else:
-            return abort(404)
+@app.route('/admin/<admin_r_id>')
+def enter_admin_room(admin_r_id):
+    r_id = admin_rooms_dict[admin_r_id]
+    expiry_duration = rooms[r_id].time - time.time()
+    for r_id in rooms:
+        if admin_r_id == rooms[r_id].admin_id:
+            return render_template('admin_room.html', title="HUM - " + rooms[r_id].name + ' - Admin',
+             room=rooms[r_id], expiry_duration = expiry_duration)
 
 
 @app.route("/create_room", methods=["POST", "GET"])
@@ -144,4 +144,3 @@ if __name__ == "__main__":
 # To Do:
 # 1. Redirect close room to its JSON file.
 # 2. Save JSON files
-# 3. Build JSON files structre

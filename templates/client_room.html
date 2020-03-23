@@ -7,5 +7,6 @@
 
 
 {% block body %}
+<script>var r_id = "{{ room.id }}";</script>
 <script src="{{ url_for('static', filename='js/client_room.js') }}"></script>
 {% endblock %}
