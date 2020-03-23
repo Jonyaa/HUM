@@ -35,6 +35,9 @@ class Room:
     def update_question_status_finished(self, question_id):
         # This function update question status from "voting" to finish
         self.questions[question_id].status = "finish"
+    
+    def close_room(self):
+        self.room_status = "closed"
 
     def create_json(self):
         # This function create json file with room data
