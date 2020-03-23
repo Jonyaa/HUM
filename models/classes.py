@@ -59,6 +59,9 @@ class Room:
 
 
 
+    def close_room(self):
+        self.room_status = "close"
+
 
 class Question:
     def __init__(self, question, desc, options): # options = Dict
