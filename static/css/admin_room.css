@@ -62,6 +62,7 @@ div.q_child {
 
 div.pending_questions_wrap {
     overflow: scroll;
+    width: 100%;
 }
 
 .q_child h2 {
@@ -80,6 +81,24 @@ div.pending_questions_wrap {
     box-sizing: border-box;
     padding: 10px;
     margin: 5px 0;
+    width: 100%;
+    position: relative;
+}
+
+.next_add_question {
+    position: absolute;
+    cursor: pointer;
+    height: 15px;
+    right: 15px;
+    bottom: 15px;
+}
+
+.trash_question {
+    height: 15px;
+    position: absolute;
+    bottom: 15px;
+    right: 45px;
+    cursor: pointer;
 }
 
 .q_child .option {
