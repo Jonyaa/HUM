@@ -1,4 +1,5 @@
 import time
+import json
 VOTING_DURATION = 30 #30 Seconds
 
 class Room:
@@ -11,6 +12,7 @@ class Room:
         self.total_connections = 0
         self.ip_list = []
         self.questions = {} # question_id: Question()
+        self.room_status = "open"
     
     def add_question(self, question_id, question, desc, options):
         # Add question to the room object
@@ -33,6 +35,29 @@ class Room:
     def update_question_status_finished(self, question_id):
         # This function update question status from "voting" to finish
         self.questions[question_id].status = "finish"
+    
+    def close_room(self):
+        self.room_status = "closed"
+
+    def create_json(self):
+        # This function create json file with room data
+        json_object = {
+            "json_creation_time": time.time(),
+            "room_id": self.id,
+            "admin_room_id": self.admin_id,
+            "room_name": self.name,
+            "room_creation_time": self.creation_time,
+            "questions": self.questions
+        }
+        json_object = json.dumps(json_object)
+        file_name = "{}_json_{}.json".format(time.time(), self.id)
+
+        #Create the json file
+        with open(file_name, "w") as f:
+            f.write(json_object)
+        return file_name
+
+
 
 
 class Question:

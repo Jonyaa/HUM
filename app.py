@@ -21,10 +21,10 @@ def index():
     # return render_template('admin_room.html', room=rooms["a"])
 
 
-@app.route('/room/<room_id>')
-def enter_room(room_id):
-    if room_id in rooms:
-        return render_template('client_room.html', title="HUM - " + rooms[room_id].name)
+@app.route('/room/<r_id>')
+def enter_room(r_id):
+    if r_id in rooms:
+        return render_template('client_room.html', title="HUM - " + rooms[r_id].name)
     else:
         return abort(404)
 
@@ -77,8 +77,7 @@ def test():
 
 @socketio.on("join_user_to_room")
 def join_user_to_room(r_id):
-    r_id = r_id
-    # Add user / admin to the room broadcast
+    # Add user / admin to socket.io's room broadcast
     # Update room object
 
     user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
@@ -94,7 +93,6 @@ def join_user_to_room(r_id):
 
 @socketio.on('disconnecting')
 def disconnecting(r_id):
-    r_id = r_id
     # Add user / admin to the room broadcast
     # Update room object
 
@@ -140,11 +138,10 @@ def hum_recived(r_id, question_id, vote):
     emit("hum_update", {"total_hums": total_hums} ,room=r_id)
 
 
-
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 8000, debug=True)
 
-
 # To Do:
-# 1. join_admin_to_room_funtion
+# 1. Redirect close room to its JSON file.
+# 2. Save JSON files
+# 3. Build JSON files structre
