@@ -1,5 +1,6 @@
 const socket = io.connect(window.location.host);
 socket.emit("join_user_to_room", r_id); //Join request to this socket.oi's room
+
 const user_url = $("#room_user_url"),
     admin_url = $("#room_admin_url"),
     section_questions = $(".questions"),
@@ -9,9 +10,9 @@ const user_url = $("#room_user_url"),
     q_form = $(".add_question_form_wrap"),
     add_form = $(".add_question_form"),
     pending_wrap = $(".pending_questions_wrap"),
-    pending_q = $(".pending_question");
-    total_connected_p = $("#total_connected");
-    total_uniqe_ip_p = $("#total_unique_ips");
+    pending_q = $(".pending_question"),
+    total_connected_p = $("#total_connected"),
+    total_uniqe_ip_p = $("#total_unique_ips"),
     room_lifetime_p = $("#room_lifetime");
 
 socket.on('user_status_update', function(data){
@@ -82,6 +83,7 @@ function add_question(event) {
         $(this).val("");
     })
 
+    socket.emit("admin_new_question", {r_id: r_id, q_id: $(".pending_question").length, question: q, desc: "test", options: options});
     // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
     /*pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
         .append($("<h3 class='question'>"+q+"</h3>"))
@@ -100,3 +102,7 @@ function add_question(event) {
     q_form.toggleClass("show");
 
 }
+
+socket.on("new_question_update", function(data) {
+    alert("NEW QUESTION UPDATE!");
+})

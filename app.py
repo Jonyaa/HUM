@@ -116,7 +116,7 @@ def admin_changed_time(r_id):
 def admin_new_question(r_id, question_id, question, desc, options):
     # Create new question object and send an update to the users
     rooms[r_id].add_question(question_id, question, desc, options)
-    message_content = {"question_id": question_id, "question":question, "desc":desc,}
+    message_content = {"question_id": question_id, "question":question, "desc":desc}
     emit("new_question_update", message_content, room=r_id)
 
 @socketio.on("admin_published_question")

@@ -1,6 +1,6 @@
 import time
 import json
-VOTING_DURATION = 30 #30 Seconds
+VOTING_DURATION = 30 # 30 Seconds
 
 class Room:
     def __init__(self, id, name, expiry_time, admin_id):
@@ -26,8 +26,8 @@ class Room:
                 self.questions[question_id].total_hums[index] += 1
 
     def update_question_status_voting(self, question_id):
-        # This function change question status from "pending" to "voting"
-        # And define the start and end time 
+        # This function changes question status from "pending" to "voting"
+        # And defines the start and end time 
         self.questions[question_id].status = "voting"
         self.questions[question_id].time_started = time.time()
         self.questions[question_id].time_started = time.time() + VOTING_DURATION
