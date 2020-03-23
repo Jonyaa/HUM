@@ -12,6 +12,7 @@ class Room:
         self.total_connections = 0
         self.ip_list = []
         self.questions = {} # question_id: Question()
+        self.room_status = "open"
     
     def add_question(self, question_id, question, desc, options):
         # Add question to the room object
