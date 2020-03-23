@@ -7,10 +7,63 @@
 
 
 {% block body %}
-<script>var r_id = "{{ room.id }}";</script>
+
+<div class="wrapper">
+    <section class="metadata">
+        <img src="../static/img/svg/logo_white.svg" alt="LOGO" class="logo">
+        <div class="md_text_wrap"> <!-- "md" for metadata -->
+            <h2 class="md_text">ROOM NAME: <span id="room_name">{{room.name}}</span></h2>
+            <h2 class="md_text">ROOM USER URL: <span id="room_user_url">{{room.id}}</span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy"> </h2>
+            <h2 class="md_text">ROOM ADMIN URL: <span id="room_admin_url"></span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy"> </h2>
+            <h2 class="md_text">ROOM LIFETIME: <span id="room_lifetime"></span></h2>
+            <h2 class="md_text">TOTAL CONNECTED: <span id="total_connected"></span></h2>
+            <h2 class="md_text">TOTAL UNIQUE IPS: <span id="total_unique_ips"></span></h2>
+        </div>
+    </section>
+
+    <section class="questions">
+        <div class="q_child" id="pending_questions">
+            <h2>PENDING QUESTIONS:</h2>
+            <div class="pending_questions_wrap"></div> <!-- That's the div that will hold all pending questions -->
+            <img src="../static/img/svg/plus.svg" alt="add question" id="add_question">
+        </div>
+        <div class="q_child" id="on_vote">
+            <h2>ON VOTE:</h2>
+            <div class="on_vote_question">
+                <h3 class="question">How much if you, and yes but not far? </h3>
+                <h3 class="total_votes">TOTAL VOTES: 113</h3>
+                <h3 class="vote_timer">00:14</h3>
+            </div>
+        </div>
+        <div class="q_child" id="finished_voting">
+            <h2>FINISHED VOTING:</h2>
+            {% for i in range(4) %}
+                <div class="finished_question">
+                    <h3 class="question">Du you really even love me?</h3>
+                    <h3 class="finished_option">Ofcourse - <span class="option_hum">BIG HUM</h3></h3>
+                    <h3 class="finished_option">Stop Asking - <span class="option_hum">SMALL HUM</h3></h3>
+                    <h3 class="finished_option">IDK - <span class="option_hum">NO HUM</h3></h3>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="add_question_form_wrap">
+        <form action="#" onsubmit="add_question(event)" class="add_question_form" autocomplete="off">
+            <input type="text" name="question" placeholder="INSERT QUESTION" required>
+            <div class="form_options">
+                <input type="text" name="option" placeholder="INSERT OPTION" required>
+                <input type="text" name="option" placeholder="INSERT OPTION" required>
+                <input type="text" name="option" placeholder="INSERT OPTION (not required)">
+                <input type="text" name="option" placeholder="INSERT OPTION (not required)">
+            </div>
+            <div class="form_actions">
+                <input type="submit" value="">
+                <img src="../static/img/svg/x.svg" alt="discard" class="dont_add_question">
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/admin_room.js') }}"></script>
-
-<h1>Admin URL - http://localhost:8000/admin/{{ room.admin_id }}</h1>
-<h1>Client URL - http://localhost:8000/room/{{ room.id }}</h1>
-
 {% endblock %}
