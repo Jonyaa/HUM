@@ -17,9 +17,8 @@ rooms["a"] = Room("a", "a", time.time() + (6 * 3600), "b") # For test purpose on
 
 @app.route('/')
 def index():
-    print(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
-    # return render_template('index.html', title="HUM")
-    return render_template('admin_room.html', room=rooms["a"])
+    return render_template('index.html', title="HUM")
+    # return render_template('admin_room.html', room=rooms["a"])
 
 
 @app.route('/room/<room_id>')
@@ -36,6 +35,8 @@ def enter_admin_room(admin_room_id):
         if admin_room_id == rooms[room_id].admin_id:
             return render_template('admin_room.html', title="HUM - " + rooms[room_id].name + ' - Admin',
              room=rooms[room_id])
+        else:
+            return abort(404)
 
 
 @app.route("/create_room", methods=["POST", "GET"])
@@ -67,6 +68,11 @@ def page_not_found(error):
 @socketio.on('connect')
 def connect():
     print("New connection")
+
+
+@socketio.on("test")
+def test():
+    print("TEST RECIEVED")
 
 
 @socketio.on("join_user_to_room")

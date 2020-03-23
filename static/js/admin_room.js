@@ -1,4 +1,4 @@
-//const socket = io.connect(window.location.host);
+var socket = io.connect(location.href);
 const user_url = $("#room_user_url"),
     admin_url = $("#room_admin_url"),
     section_questions = $(".questions"),
@@ -10,6 +10,8 @@ const user_url = $("#room_user_url"),
     pending_wrap = $(".pending_questions_wrap"),
     pending_q = $(".pending_question");
 
+
+socket.emit("test");
 
 $(document).ready(function() {
 
@@ -48,7 +50,7 @@ function add_question(event) {
     })
 
     // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
-    pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
+    /*pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
         .append($("<h3 class='question'>"+q+"</h3>"))
         .append($("<div class='pending_question_options'></div>")
             .append(function() {
@@ -60,7 +62,7 @@ function add_question(event) {
             }))
         .append($("<img src='../static/img/svg/next2.svg' class='next_add_question'>"))
         .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
-    )
+    )*/
     
     q_form.toggleClass("show");
 
