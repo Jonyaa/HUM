@@ -31,12 +31,15 @@ def enter_room(r_id):
 
 @app.route('/admin/<admin_r_id>')
 def enter_admin_room(admin_r_id):
-    r_id = admin_rooms_dict[admin_r_id]
-    expiry_duration = rooms[r_id].time - time.time()
-    for r_id in rooms:
-        if admin_r_id == rooms[r_id].admin_id:
-            return render_template('admin_room.html', title="HUM - " + rooms[r_id].name + ' - Admin',
-             room=rooms[r_id], expiry_duration = expiry_duration)
+    try:
+        r_id = admin_rooms_dict[admin_r_id]
+        expiry_duration = rooms[r_id].time - time.time()
+        for r_id in rooms:
+            if admin_r_id == rooms[r_id].admin_id:
+                return render_template('admin_room.html', title="HUM - " + rooms[r_id].name + ' - Admin',
+                    room=rooms[r_id], expiry_duration = expiry_duration)
+    except:
+        abort(404)
 
 
 @app.route("/create_room", methods=["POST", "GET"])
@@ -126,14 +129,16 @@ def admin_new_question(data):
     print(rooms[r_id].questions)
 
 @socketio.on("admin_published_question")
-def admin_published_question(r_id, question_id):
+def admin_published_question(data):
+    r_id, q_id = data["r_id"], data["q_id"]
     # Change object status and update users
     # Send users the question options and the end_time
-    rooms[r_id].update_question_status_voting(question_id)
-    options = rooms[r_id].questions[question_id].options
-    time_end = rooms[r_id].questions[question_id].time_end
+    rooms[r_id].update_question_status_voting(q_id)
+    options = rooms[r_id].questions[q_id].options
+    time_end = rooms[r_id].questions[q_id].time_end
+    question = rooms[r_id].questions[q_id].question
 
-    message_content = {"question_id": question_id, "time_end":time_end, "options": options}
+    message_content = {"q_id": q_id, "time_end":time_end, "question": question, "options": options}
     emit("voting_started", message_content, room=r_id)
 
 @socketio.on("hum_recived")

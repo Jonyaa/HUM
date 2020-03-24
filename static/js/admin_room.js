@@ -83,7 +83,7 @@ function add_question(event) {
         $(this).val("");
     })
 
-    socket.emit("admin_new_question", {r_id: r_id, q_id: $(".pending_question").length, question: q, desc: "test", options: options});
+    socket.emit("admin_new_question", {r_id: r_id, q_id: "q"+$(".pending_question").length, question: q, desc: "test", options: options});
     // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
     pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
         .append($("<h3 class='question'>"+q+"</h3>"))
@@ -95,7 +95,7 @@ function add_question(event) {
                 });
                 return res;
             }))
-        .append($("<img src='../static/img/svg/next2.svg' class='next_add_question'>"))
+        .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
         .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
     )
     
@@ -103,6 +103,25 @@ function add_question(event) {
 
 }
 
+
+function put_on_vote(e) {
+    var q_id = e.parentNode.id;
+    socket.emit("admin_published_question", {r_id: r_id, q_id: q_id});
+}
+
 socket.on("new_question_update", function(data) {
     alert("NEW QUESTION UPDATE!");
+})
+
+socket.on("voting_started", function(data) {
+    var q_id = data.q_id,
+        q = data.question,
+        options = data.options
+    
+    $('.on_vote_question')
+    .append($('<h3 class="question" id='+q_id+'>'+q+'</h3>'))
+    .append($('<h3 class="total_votes">TOTAL VOTES: 113</h3>'))
+    .append($('<h3 class="vote_timer">00:13</h3>'));
+
+    $(".pending_question#"+q_id).remove();
 })
