@@ -151,11 +151,13 @@ def admin_published_question(data):
     # It's joined to a que because its impossible to call http function (such as emit) in a thread
     # So the function run as a thread for x seconds as defined by "expiry_duration" variable
     #   and then the emit send its results from the que
-    
+
     def humming_finished():
         rooms[r_id].update_question_status_finished(q_id)
         message_content = {
             "q_id": q_id,
+            "question": rooms[r_id].questions[q_id].question,
+            "options": rooms[r_id].questions[q_id].options,
             "results": rooms[r_id].questions[q_id].q_results
         }
         print(message_content)
@@ -163,7 +165,6 @@ def admin_published_question(data):
 
     que = queue.Queue()
     timer = Timer(expiry_duration, lambda q: q.put(humming_finished()), args=[que])
-    #timer = Timer(expiry_duration, humming_finished)
     timer.start()
     timer.join()
     result_message_content = que.get()

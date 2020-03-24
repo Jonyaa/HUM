@@ -1,7 +1,7 @@
 import time
 import json
 
-VOTING_DURATION = 30 # 30 Seconds
+VOTING_DURATION = 1 # 180 Seconds
 SILENCE     = 0
 WEAK_HUM    = 20
 MEDIUM_HUM  = 70

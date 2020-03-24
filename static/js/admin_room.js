@@ -54,7 +54,6 @@ $(document).ready(function() {
     section_questions.css("height", $(window).height() - section_metadata.outerHeight() + "px");
 
     // Room lifetime setup
-    console.log(expiry_duration)
     startTimer(expiry_duration, room_lifetime_p);
 })
 
@@ -135,6 +134,23 @@ socket.on("voting_started", function(data) {
 socket.on("hum_update", function(data) {
     total_votes_h = $(".total_votes");
     total_votes_h.text("TOTAL HUMS" + data.total_hums);
+})
+
+socket.on("humming_finished", function(data) {
+    var q_id = data.q_id,
+    q = data.question,
+    options = data.options,
+    results = data.results
+    $('#finished_voting')
+    .append($('<div class="finished_question" id='+q_id+'></div>'))
+    $('#'+q_id+'.finished_question')
+        .append($('<h3 class="question">'+q+'</h3>'))
+        
+        // Should make it a FOR loop vv
+        .append($('<h3 class="finished_option">'+options["0"]+' - <span class="option_hum">'+results[0]+'</span></h3>'))
+        // Should make it a FOR loop ^^
+        // Should reset "ON VOTE section"
+            
 })
 
 
