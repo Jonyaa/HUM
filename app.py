@@ -5,6 +5,9 @@ from models.classes import Room
 from models.functions import get_random_url
 import time
 
+from threading import Timer
+import queue
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
@@ -141,11 +144,38 @@ def admin_published_question(data):
 
     message_content = {"q_id": q_id, "expiry_duration":expiry_duration, "question": question, "options": options}
     emit("voting_started", message_content, room=r_id)
+    
+
+    # It's a little tricky but stay with me:
+    # The function below (humming_finished) activate as a thread
+    # It's joined to a que because its impossible to call http function (such as emit) in a thread
+    # So the function run as a thread for x seconds as defined by "expiry_duration" variable
+    #   and then the emit send its results from the que
+    
+    def humming_finished():
+        rooms[r_id].update_question_status_finished(q_id)
+        message_content = {
+            "q_id": q_id,
+            "results": rooms[r_id].questions[q_id].q_results
+        }
+        print(message_content)
+        return message_content
+
+    que = queue.Queue()
+    timer = Timer(expiry_duration, lambda q: q.put(humming_finished()), args=[que])
+    #timer = Timer(expiry_duration, humming_finished)
+    timer.start()
+    timer.join()
+    result_message_content = que.get()
+    emit("humming_finished", result_message_content, room=r_id)
+    print("The results are: \n", result_message_content, "\n")
+    
 
 @socketio.on("hum_recived")
 def hum_recived(r_id, question_id, vote):
     # Recived vote from user and update question object, then send users an update
     rooms[r_id].update_hum(question_id, vote)
+    rooms[r_id].questions[question_id].num_users_voted += 1
     total_hums = rooms[r_id].questions[question_id].total_hums
     emit("hum_update", {"total_hums": total_hums} ,room=r_id)
 

@@ -1,6 +1,11 @@
 import time
 import json
+
 VOTING_DURATION = 30 # 30 Seconds
+SILENCE     = 0
+WEAK_HUM    = 20
+MEDIUM_HUM  = 70
+STRONG_HUM  = 100
 
 class Room:
     def __init__(self, id, name, expiry_time, admin_id):
@@ -34,7 +39,10 @@ class Room:
 
     def update_question_status_finished(self, question_id):
         # This function update question status from "voting" to finish
+        # And calls the function that calculates the results
+        self.questions[question_id].calculate_hums()
         self.questions[question_id].status = "finish"
+
     
     def close_room(self):
         self.room_status = "closed"
@@ -65,9 +73,33 @@ class Question:
         self.status = "pending"
         self.time_started = None
         self.time_end = None
+        self.num_users_voted = 0
         self.options = {}
+        
         
         # Define options dictionary
         for index, option in enumerate(options):
             self.options[index] = option # self.options[1] = Option number 2
         self.total_hums = [0, 0, 0, 0] # [2,14,0,0] Means that option 1 fot 2 hums, option 2 got 14 hums
+    
+    def calculate_hums(self):
+        self.q_summery = [0, 0, 0, 0]
+        self.q_results = [0, 0, 0, 0]
+
+        # Calculate the percentages of each hum out of total hums 
+        for i in range(len(self.total_hums)):
+            # Cant divide zeros
+            if self.total_hums[i]:
+                self.q_summery[i] = self.total_hums[i] / self.num_users_voted * 100
+        
+        # Translate numbers to results
+        for i in range(len(self.q_summery)):
+            result = self.q_summery[i]
+            if result <= SILENCE:
+                self.q_results[i] = "Silence"
+            if WEAK_HUM >= result > SILENCE:
+                self.q_results[i] = "Weak HUM"
+            if MEDIUM_HUM >= result > WEAK_HUM:
+                self.q_results[i] = "Medium HUM"
+            if STRONG_HUM >= result > MEDIUM_HUM:
+                self.q_results[i] = "Strong HUM!"
