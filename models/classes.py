@@ -30,7 +30,7 @@ class Room:
         # And defines the start and end time 
         self.questions[question_id].status = "voting"
         self.questions[question_id].time_started = time.time()
-        self.questions[question_id].time_started = time.time() + VOTING_DURATION
+        self.questions[question_id].time_end = time.time() + VOTING_DURATION
 
     def update_question_status_finished(self, question_id):
         # This function update question status from "voting" to finish

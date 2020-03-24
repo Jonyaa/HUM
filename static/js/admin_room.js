@@ -14,6 +14,7 @@ const user_url = $("#room_user_url"),
     total_connected_p = $("#total_connected"),
     total_uniqe_ip_p = $("#total_unique_ips"),
     room_lifetime_p = $("#room_lifetime");
+    
 
 socket.on('user_status_update', function(data){
     total_connected_p.text(data["total_connections"]);
@@ -84,20 +85,23 @@ function add_question(event) {
     })
 
     socket.emit("admin_new_question", {r_id: r_id, q_id: "q"+$(".pending_question").length, question: q, desc: "test", options: options});
-    // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
-    pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
-        .append($("<h3 class='question'>"+q+"</h3>"))
-        .append($("<div class='pending_question_options'></div>")
-            .append(function() {
-                let res = "";
-                $(options).each(function(index, element) {
-                    res += "<h5 class='option'>"+(index+1) + ". " + this + "</h5>";
-                });
-                return res;
-            }))
-        .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
-        .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
-    )
+    
+    socket.on("new_question_update", function(data) {
+        // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
+        pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
+            .append($("<h3 class='question'>"+q+"</h3>"))
+            .append($("<div class='pending_question_options'></div>")
+                .append(function() {
+                    let res = "";
+                    $(options).each(function(index, element) {
+                        res += "<h5 class='option'>"+(index+1) + ". " + this + "</h5>";
+                    });
+                    return res;
+                }))
+            .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
+            .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
+        )
+    })
     
     q_form.toggleClass("show");
 
@@ -109,19 +113,25 @@ function put_on_vote(e) {
     socket.emit("admin_published_question", {r_id: r_id, q_id: q_id});
 }
 
-socket.on("new_question_update", function(data) {
-    alert("NEW QUESTION UPDATE!");
-})
-
 socket.on("voting_started", function(data) {
     var q_id = data.q_id,
         q = data.question,
-        options = data.options
+        options = data.options,
+        vote_expiry_duration = data.expiry_duration
     
     $('.on_vote_question')
     .append($('<h3 class="question" id='+q_id+'>'+q+'</h3>'))
-    .append($('<h3 class="total_votes">TOTAL VOTES: 113</h3>'))
-    .append($('<h3 class="vote_timer">00:13</h3>'));
+    .append($('<h3 class="total_votes">TOTAL HUMS: 0</h3>'))
+    .append($('<h3 class="vote_timer"></h3>'));
+
+    // Voting timer
+    vote_timer = $(".vote_timer");
+    startTimer(vote_expiry_duration, vote_timer);
 
     $(".pending_question#"+q_id).remove();
+})
+
+socket.on("hum_update", function(data) {
+    total_votes_h = $(".total_votes");
+    total_votes_h.text("TOTAL HUMS" + data.total_hums);
 })

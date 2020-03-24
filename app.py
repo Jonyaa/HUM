@@ -130,15 +130,16 @@ def admin_new_question(data):
 
 @socketio.on("admin_published_question")
 def admin_published_question(data):
-    r_id, q_id = data["r_id"], data["q_id"]
     # Change object status and update users
     # Send users the question options and the end_time
+    r_id, q_id = data["r_id"], data["q_id"]
+    
     rooms[r_id].update_question_status_voting(q_id)
     options = rooms[r_id].questions[q_id].options
-    time_end = rooms[r_id].questions[q_id].time_end
+    expiry_duration = ( rooms[r_id].questions[q_id].time_end - time.time() )
     question = rooms[r_id].questions[q_id].question
 
-    message_content = {"q_id": q_id, "time_end":time_end, "question": question, "options": options}
+    message_content = {"q_id": q_id, "expiry_duration":expiry_duration, "question": question, "options": options}
     emit("voting_started", message_content, room=r_id)
 
 @socketio.on("hum_recived")
