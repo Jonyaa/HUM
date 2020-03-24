@@ -122,7 +122,7 @@ def admin_new_question(data):
     r_id, q_id, question, desc, options = data["r_id"], data["q_id"], data["question"], data["desc"], data["options"]
     
     rooms[r_id].add_question(q_id, question, desc, options)
-    message_content = {"q_id": q_id, "question":question, "desc":desc}
+    message_content = {"q_id": q_id, "question": question, "options": options, "desc": desc}
     # Send users an update
     emit("new_question_update", message_content, room=r_id)
     print("New question recived from room: ", r_id)

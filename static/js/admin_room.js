@@ -86,26 +86,27 @@ function add_question(event) {
 
     socket.emit("admin_new_question", {r_id: r_id, q_id: "q"+$(".pending_question").length, question: q, desc: "test", options: options});
     
-    socket.on("new_question_update", function(data) {
-        // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
-        pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
-            .append($("<h3 class='question'>"+q+"</h3>"))
-            .append($("<div class='pending_question_options'></div>")
-                .append(function() {
-                    let res = "";
-                    $(options).each(function(index, element) {
-                        res += "<h5 class='option'>"+(index+1) + ". " + this + "</h5>";
-                    });
-                    return res;
-                }))
-            .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
-            .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
-        )
-    })
-    
     q_form.toggleClass("show");
 
 }
+
+socket.on("new_question_update", function(data) {
+    // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
+    var q_id = data.q_id, q = data.question, options = data.options, desc = data.desc;
+    pending_wrap.append($("<div class='pending_question' id="+q_id+"></div>")
+        .append($("<h3 class='question'>"+q+"</h3>"))
+        .append($("<div class='pending_question_options'></div>")
+            .append(function() {
+                let res = "";
+                $(options).each(function(index, element) {
+                    res += "<h5 class='option'>"+(index+1) + ". " + this + "</h5>";
+                });
+                return res;
+            }))
+        .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
+        .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
+    )
+})
 
 
 function put_on_vote(e) {
@@ -135,3 +136,13 @@ socket.on("hum_update", function(data) {
     total_votes_h = $(".total_votes");
     total_votes_h.text("TOTAL HUMS" + data.total_hums);
 })
+
+
+// The function that copies the user url to clipboard
+function copy_url(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+  }
