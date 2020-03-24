@@ -13,7 +13,7 @@ socketio = SocketIO(app)
 rooms = {} # {room id: room object}
 admin_rooms_dict = {} # {admin_r_number: r_number}
 rooms["a"] = Room("a", "a", time.time() + (6 * 3600), "b") # For test purpose only
-
+admin_rooms_dict["b"] = "a" # For test purpose only
 
 @app.route('/')
 def index():
@@ -113,11 +113,17 @@ def admin_changed_time(r_id):
     emit("time_change_update", {"r_expiry_time": rooms[r_id].time}, room=r_id)
 
 @socketio.on("admin_new_question")
-def admin_new_question(r_id, question_id, question, desc, options):
+def admin_new_question(data):
     # Create new question object and send an update to the users
-    rooms[r_id].add_question(question_id, question, desc, options)
-    message_content = {"question_id": question_id, "question":question, "desc":desc}
+    # Example: {'r_id': 'q161mp73l99w7uos', 'q_id': 0, 'question': 'dsa', 'desc': 'test', 'options': ['d', 'd']}
+    r_id, q_id, question, desc, options = data["r_id"], data["q_id"], data["question"], data["desc"], data["options"]
+    
+    rooms[r_id].add_question(q_id, question, desc, options)
+    message_content = {"q_id": q_id, "question":question, "desc":desc}
+    # Send users an update
     emit("new_question_update", message_content, room=r_id)
+    print("New question recived from room: ", r_id)
+    print(rooms[r_id].questions)
 
 @socketio.on("admin_published_question")
 def admin_published_question(r_id, question_id):

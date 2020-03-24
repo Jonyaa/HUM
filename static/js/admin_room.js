@@ -85,7 +85,7 @@ function add_question(event) {
 
     socket.emit("admin_new_question", {r_id: r_id, q_id: $(".pending_question").length, question: q, desc: "test", options: options});
     // THIS JQUERY ADDS THE NEW DOM QUESTION DIV'S ELEMENTS TO THE PENDING QUESTIONS AREA
-    /*pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
+    pending_wrap.append($("<div class='pending_question' id='q"+$(".pending_question").length+"'></div>")
         .append($("<h3 class='question'>"+q+"</h3>"))
         .append($("<div class='pending_question_options'></div>")
             .append(function() {
@@ -97,7 +97,7 @@ function add_question(event) {
             }))
         .append($("<img src='../static/img/svg/next2.svg' class='next_add_question'>"))
         .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
-    )*/
+    )
     
     q_form.toggleClass("show");
 
