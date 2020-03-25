@@ -34,13 +34,19 @@ def enter_room(r_id):
 
 @app.route('/admin/<admin_r_id>')
 def enter_admin_room(admin_r_id):
+    print(rooms["a"].pending_questions_list())
+
     try:
         r_id = admin_rooms_dict[admin_r_id]
         expiry_duration = rooms[r_id].time - time.time()
         for r_id in rooms:
             if admin_r_id == rooms[r_id].admin_id:
+                pending_q_dict = rooms[r_id].pending_questions_list()
+                finished_q_dict = rooms[r_id].finished_questions_list()
+                print(finished_q_dict)
                 return render_template('admin_room.html', title="HUM - " + rooms[r_id].name + ' - Admin',
-                    room=rooms[r_id], expiry_duration = expiry_duration)
+                    room=rooms[r_id], expiry_duration = expiry_duration, pending_q_dict = pending_q_dict,
+                    finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions))
     except:
         abort(404)
 
@@ -129,7 +135,6 @@ def admin_new_question(data):
     # Send users an update
     emit("new_question_update", message_content, room=r_id)
     print("New question recived from room: ", r_id)
-    print(rooms[r_id].questions)
 
 @socketio.on("admin_published_question")
 def admin_published_question(data):
@@ -164,7 +169,7 @@ def admin_published_question(data):
         return message_content
 
     que = queue.Queue()
-    timer = Timer(expiry_duration, lambda q: q.put(humming_finished()), args=[que])
+    timer = Timer(expiry_duration + 2, lambda q: q.put(humming_finished()), args=[que])
     timer.start()
     timer.join()
     result_message_content = que.get()
@@ -172,13 +177,15 @@ def admin_published_question(data):
     print("The results are: \n", result_message_content, "\n")
     
 
-@socketio.on("hum_recived")
-def hum_recived(r_id, question_id, vote):
+@socketio.on("new_hum")
+def new_hum(data):
     # Recived vote from user and update question object, then send users an update
-    rooms[r_id].update_hum(question_id, vote)
-    rooms[r_id].questions[question_id].num_users_voted += 1
-    total_hums = rooms[r_id].questions[question_id].total_hums
-    emit("hum_update", {"total_hums": total_hums} ,room=r_id)
+    r_id, q_id, vote = data["r_id"], data["q_id"], data["vote"]
+
+    rooms[r_id].update_hum(q_id, vote)
+    rooms[r_id].questions[q_id].num_users_voted += 1
+    num_users_voted =  rooms[r_id].questions[q_id].num_users_voted
+    emit("hum_update", {"num_users_voted": num_users_voted} ,room=r_id)
 
 
 if __name__ == "__main__":

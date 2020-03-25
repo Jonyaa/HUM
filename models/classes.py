@@ -18,6 +18,9 @@ class Room:
         self.ip_list = []
         self.questions = {} # question_id: Question()
         self.room_status = "open"
+
+    def close_room(self):
+        self.room_status = "closed"
     
     def add_question(self, question_id, question, desc, options):
         # Add question to the room object
@@ -41,11 +44,42 @@ class Room:
         # This function update question status from "voting" to finish
         # And calls the function that calculates the results
         self.questions[question_id].calculate_hums()
-        self.questions[question_id].status = "finish"
-
+        self.questions[question_id].status = "finished"
     
-    def close_room(self):
-        self.room_status = "closed"
+    def pending_questions_list(self):
+        # Create pending list for page rendering
+
+        pending_list = {}
+        for q in self.questions:
+            q_object = self.questions[q]
+            if q_object.status == "pending":
+                pending_list[q] = {}
+                pending_list[q]["question"] = q_object.question
+                pending_list[q]["options"] = q_object.options
+        
+        # Return only if there are questions so the page will render it only if there are questions
+        if pending_list != {}:
+            return pending_list
+        return None
+
+    def finished_questions_list(self):
+        # Create finished section list for page rendering
+
+        finished_list = {}
+
+        # Iterate each question in questions dict
+        for q in self.questions:
+            q_object = self.questions[q]
+            if q_object.status == "finished":
+                finished_list[q] = {}
+                finished_list[q]["question"] = q_object.question
+                finished_list[q]["options"] = q_object.options
+                finished_list[q]["results"] = q_object.q_results
+        # Return only if there are questions so the page will render it only if there are questions
+        if finished_list != {}:
+            return finished_list
+        return None
+    
 
     def create_json(self):
         # This function create json file with room data

@@ -57,7 +57,7 @@ div.q_child {
     flex-flow: column;
     justify-content: flex-start;
     align-items: flex-start;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 div.pending_questions_wrap {
@@ -134,11 +134,13 @@ div.pending_questions_wrap {
 
 .total_votes {
     font-weight: 400;
+    text-align: center;
 }
 
 .vote_timer {
     font-size: 40px;
     text-align: center;
+    color: var(--yellow-hl);
 }
 
 .finished_question {

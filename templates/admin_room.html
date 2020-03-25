@@ -24,7 +24,22 @@
     <section class="questions">
         <div class="q_child" id="pending_questions">
             <h2>PENDING QUESTIONS:</h2>
-            <div class="pending_questions_wrap"></div> <!-- That's the div that will hold all pending questions -->
+            <div class="pending_questions_wrap">
+                {% if pending_q_dict %} <!-- Only if there are already pending questions in the server -->
+                {% for q in pending_q_dict %}
+                <div class="pending_question" id="{{ q }}">
+                    <h3 class="question">{{ pending_q_dict[q].question }}</h3>
+                    <div class="pending_question_options">
+                        {% for opt in pending_q_dict[q].options %}
+                        <h5 class="option">{{ opt + 1 }} . {{ pending_q_dict[q].options[opt] }}</h5>
+                        {% endfor %}
+                    </div>
+                    <img src="../static/img/svg/next2.svg" class="next_add_question" onclick="put_on_vote(this)">
+                    <img src="../static/img/svg/trash.svg" class="trash_question">
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div> <!-- That's the div that will hold all pending questions -->
             <img src="../static/img/svg/plus.svg" alt="add question" id="add_question">
         </div>
         <div class="q_child" id="on_vote">
@@ -34,14 +49,19 @@
         </div>
         <div class="q_child" id="finished_voting">
             <h2>FINISHED VOTING:</h2>
-            {% for i in range(1) %}
+            {% if finished_q_dict %} <!-- Only if there are already pending questions in the server -->
+            {% for q in finished_q_dict %}
                 <div class="finished_question">
-                    <h3 class="question">Du you really even love me?</h3>
-                    <h3 class="finished_option">Ofcourse - <span class="option_hum">BIG HUM</h3></h3>
-                    <h3 class="finished_option">Stop Asking - <span class="option_hum">SMALL HUM</h3></h3>
-                    <h3 class="finished_option">IDK - <span class="option_hum">NO HUM</h3></h3>
+                    <h3 class="question">{{ finished_q_dict[q].question }}</h3>
+                    {% for opt in finished_q_dict[q].options %}
+                    <h3 class="finished_option">{{ finished_q_dict[q].options[opt] }} - 
+                        
+                        <span class="option_hum">  {{ finished_q_dict[q].results[loop.index] }}  </span>
+                    </h3>
+                    {% endfor %}
                 </div>
             {% endfor %}
+            {% endif %}
         </div>
     </section>
 
@@ -62,7 +82,7 @@
     </div>
 </div>
 
-<script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"</script>
+<script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"; var this_question_id = "{{num_questions}}"</script>
 
 <script src="{{ url_for('static', filename='js/admin_room.js') }}"></script>
 {% endblock %}

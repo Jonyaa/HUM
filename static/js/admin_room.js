@@ -14,6 +14,8 @@ const user_url = $("#room_user_url"),
     total_connected_p = $("#total_connected"),
     total_uniqe_ip_p = $("#total_unique_ips"),
     room_lifetime_p = $("#room_lifetime");
+//var this_question_id = 0
+console.log("This q_id: " + this_question_id)
     
 
 socket.on('user_status_update', function(data){
@@ -83,10 +85,10 @@ function add_question(event) {
         $(this).val("");
     })
 
-    socket.emit("admin_new_question", {r_id: r_id, q_id: "q"+$(".pending_question").length, question: q, desc: "test", options: options});
+    socket.emit("admin_new_question", {r_id: r_id, q_id: "q"+this_question_id, question: q, desc: "test", options: options});
     
+    this_question_id += 1;
     q_form.toggleClass("show");
-
 }
 
 socket.on("new_question_update", function(data) {
@@ -129,27 +131,56 @@ socket.on("voting_started", function(data) {
     startTimer(vote_expiry_duration, vote_timer);
 
     $(".pending_question#"+q_id).remove();
+
+    // Create options form
+    options_form = $('<form onsubmit="send_hums(question_id, vote)" class="humming_form"></form>')
+    $('.on_vote_question').append(options_form)
+
+    // Create button for each option
+    for (var option_key in options){
+        options_form
+            .append($('<button class="option_button">'+options[option_key]+'</button>'))
+    }
+    options_form.append('<input type="submit" value="Send hums">')
+
+    send_hums(q_id, "0101");
+
 })
+
+function send_hums(q_id, vote){
+    socket.emit("new_hum", {r_id: r_id, q_id: q_id, "vote": vote});
+}
+
 
 socket.on("hum_update", function(data) {
     total_votes_h = $(".total_votes");
-    total_votes_h.text("TOTAL HUMS" + data.total_hums);
+    total_votes_h.text("Number of users who HUMed: " + data.num_users_voted);
 })
 
 socket.on("humming_finished", function(data) {
+    // After huuming (voting) the server sends the results and this function display the results 
+    //      and reset "on vote" section 
     var q_id = data.q_id,
     q = data.question,
     options = data.options,
     results = data.results
     $('#finished_voting')
     .append($('<div class="finished_question" id='+q_id+'></div>'))
-    $('#'+q_id+'.finished_question')
+    finished_question_div = $('#'+q_id+'.finished_question');
+    finished_question_div
         .append($('<h3 class="question">'+q+'</h3>'))
-        
-        // Should make it a FOR loop vv
-        .append($('<h3 class="finished_option">'+options["0"]+' - <span class="option_hum">'+results[0]+'</span></h3>'))
-        // Should make it a FOR loop ^^
-        // Should reset "ON VOTE section"
+    
+    // For item in options dictionary: print option + result
+    for (var option_key in options){
+        finished_question_div
+            .append($('<h3 class="finished_option">'+options[option_key]+' - <span class="option_hum">'+results[parseInt(option_key)]+'</span></h3>'))
+    }
+
+    // Remove question from voting section
+    $(".question#"+q_id).remove();
+    $(".total_votes").remove();
+    $(".vote_timer").remove();
+    $(".humming_form").remove();
             
 })
 
@@ -162,3 +193,7 @@ function copy_url(element) {
     document.execCommand("copy");
     $temp.remove();
   }
+
+
+  // To do:
+  // 1. Create voting buttons
