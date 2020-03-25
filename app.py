@@ -44,7 +44,7 @@ def enter_admin_room(admin_r_id):
                 pending_q_dict = rooms[r_id].pending_questions_list()
                 finished_q_dict = rooms[r_id].finished_questions_list()
                 print(finished_q_dict)
-                return render_template('admin_room.html', title="HUM - " + rooms[r_id].name + ' - Admin',
+                return render_template('admin_room.html', title="HUM - Admin",
                     room=rooms[r_id], expiry_duration = expiry_duration, pending_q_dict = pending_q_dict,
                     finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions))
     except:
