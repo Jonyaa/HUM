@@ -1,0 +1,11 @@
+{
+    "json_creation_time": 1585415124.7006698,
+    "room_id": "a",
+    "admin_room_id": "b",
+    "room_name": "a",
+    "room_creation_time": 1585415112.8847306,
+    "questions": {
+        "q0": {question": "ds",
+            "desc": \"test\", \"status\": \"finished\", \"time_started\": 1585415121.6467488, \"time_end\": 1585415122.6467488, "num_users_voted": 0, \"options\": {\"0\": \"D\", \"1\": \"D\"}, \"user_answerd_list\": [], \"total_hums\": [0, 0, 0, 0], \"q_summery\": [0, 0, 0, 0], \"q_results\": [\"Silence\", \"Silence\", \"Silence\", \"Silence\"]}"
+    }
+}

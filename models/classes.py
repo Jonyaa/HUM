@@ -1,7 +1,8 @@
 import time
 import json
+import os
 
-VOTING_DURATION = 30 # 180 Seconds
+VOTING_DURATION = 1 # 180 Seconds
 SILENCE     = 0
 WEAK_HUM    = 20
 MEDIUM_HUM  = 70
@@ -19,8 +20,7 @@ class Room:
         self.questions = {} # question_id: Question()
         self.room_status = "open"
 
-    def close_room(self):
-        self.room_status = "closed"
+    
     
     def add_question(self, question_id, question, desc, options):
         # Add question to the room object
@@ -89,16 +89,32 @@ class Room:
             "admin_room_id": self.admin_id,
             "room_name": self.name,
             "room_creation_time": self.creation_time,
-            "questions": self.questions
+            "questions": {}
         }
+        q_dict = json_object["questions"]
+
+        # Insert each question data into json
+        for q in self.questions:
+            q_object = json.dumps(self.questions[q].__dict__)
+            q_dict[q] = q_object
+        json_folder = "json_files"
+
+        # Dictionary to json object
         json_object = json.dumps(json_object)
-        file_name = "{}_json_{}.json".format(time.time(), self.id)
+
+        file_name = "{}_{}.json".format(self.id, time.time())
+        file_name = os.path.join(json_folder, file_name)
 
         #Create the json file
         with open(file_name, "w") as f:
             f.write(json_object)
+        print("Created new json file:", file_name)
         return file_name
 
+
+    def close_room(self):
+        self.room_status = "closed"
+        self.create_json()
 
 class Question:
     def __init__(self, question, desc, options): # options = Dict
@@ -109,6 +125,7 @@ class Question:
         self.time_end = None
         self.num_users_voted = 0
         self.options = {}
+        self.user_answerd_list = []
         
         
         # Define options dictionary

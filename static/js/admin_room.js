@@ -216,4 +216,3 @@ function copy_url(element) {
 
 
   // To do:
-  // 1. Create voting buttons

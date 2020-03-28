@@ -175,22 +175,28 @@ def admin_published_question(data):
     result_message_content = que.get()
     emit("humming_finished", result_message_content, room=r_id)
     print("The results are: \n", result_message_content, "\n")
+    rooms[r_id].create_json()
     
 
 @socketio.on("new_hum")
 def new_hum(data):
     # Recived vote from user and update question object, then send users an update
     r_id, q_id, vote = data["r_id"], data["q_id"], data["vote"]
+    user_sid = request.sid
+    user_answerd_sid_list = rooms[r_id].questions[q_id].user_answerd_list
 
-    rooms[r_id].update_hum(q_id, vote)
-    rooms[r_id].questions[q_id].num_users_voted += 1
-    num_users_voted =  rooms[r_id].questions[q_id].num_users_voted
-    emit("hum_update", {"num_users_voted": num_users_voted} ,room=r_id)
+    # Make sure the user did not hummed
+    if user_sid not in user_answerd_sid_list:
+        rooms[r_id].update_hum(q_id, vote)
+        user_answerd_sid_list.append(request.sid)
+        rooms[r_id].questions[q_id].num_users_voted += 1
+        num_users_voted =  rooms[r_id].questions[q_id].num_users_voted
+        emit("hum_update", {"num_users_voted": num_users_voted} ,room=r_id)
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 8000, debug=True)
 
 # To Do:
-# 1. Redirect close room to its JSON file.
+# 1. Redirect closed room to its JSON file.
 # 2. Save JSON files
