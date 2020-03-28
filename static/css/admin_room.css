@@ -143,6 +143,52 @@ div.pending_questions_wrap {
     color: var(--yellow-hl);
 }
 
+.options_wrapper {
+    align-self: flex-start;
+}
+
+.vote_option_container {
+    display: flex;
+    flex-flow: row;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.vote_option_container input[type=checkbox] {
+    opacity: 0;
+}
+
+.vote_option_container span {
+    height: 25px;
+    width: 25px;
+    border: 1px solid black;
+    margin-right: 10px;
+}
+
+.vote_option_container input[type=checkbox]:checked ~ span {
+    background-image: url('../img/svg/p1.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.options_wrapper button {
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 0;
+    background-color: var(--yellow-hl);
+    margin-left: 20px;
+}
+
+.options_wrapper button:hover {
+    background-color: darkgoldenrod;
+}
+
+.options_wrapper button:active {
+    border: none;
+}
+
 .finished_question {
     border: 3px solid black;
     padding: 5px;

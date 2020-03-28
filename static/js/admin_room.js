@@ -134,25 +134,41 @@ socket.on("voting_started", function(data) {
 
     // Create options form
     
-    $('.on_vote_question').append(options_form)
+    var options_wrapper = $("<div class='options_wrapper'></div>")
+    $('.on_vote_question').append(options_wrapper)
 
     // Create button for each option
     for (var option_key in options) {
-        options_form.append($('<label class="vote_option_container"></label>')
+        options_wrapper.append($('<label class="vote_option_container"></label>')
                     .append($('<input type="checkbox" name='+option_key+'>'))
                     .append($('<span class="checkmark"></span>'))
                     .append($('<p class="option_label">'+options[option_key]+'</p>')))
     }
-    options_form.append('<input type="submit" value="Send hums">');
+    options_wrapper.append('<button class="place_vote_btn" onclick="send_hums(this)">SEND VOTE</button>');
 
     //send_hums(q_id, "0101");
 
 })
 
-function send_hums(event, q_id, vote){
-    alert(event + q_id + vote);
-    //socket.emit("new_hum", {r_id: r_id, q_id: q_id, "vote": vote});
-    return false;
+function send_hums(obj) {
+    var q_id = obj.parentElement.parentElement.children[0].id;
+    var votes = "";
+    $("input[type=checkbox]").each(function() {
+        if (this.checked) {
+            votes += "1";
+        } else {
+            votes += "0";
+        }
+    })
+    if (votes.length < 4) {
+        var n = 4-votes.length;
+        for (let i = 0; i < n; i++) {
+            votes += "0";
+        }
+    }
+    obj.parentElement.remove();
+    console.log(q_id + "-" + votes);
+    socket.emit("new_hum", {r_id: r_id, q_id: q_id, "vote": votes});
 }
 
 
