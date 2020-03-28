@@ -133,22 +133,26 @@ socket.on("voting_started", function(data) {
     $(".pending_question#"+q_id).remove();
 
     // Create options form
-    options_form = $('<form onsubmit="send_hums(question_id, vote)" class="humming_form"></form>')
+    
     $('.on_vote_question').append(options_form)
 
     // Create button for each option
-    for (var option_key in options){
-        options_form
-            .append($('<button class="option_button">'+options[option_key]+'</button>'))
+    for (var option_key in options) {
+        options_form.append($('<label class="vote_option_container"></label>')
+                    .append($('<input type="checkbox" name='+option_key+'>'))
+                    .append($('<span class="checkmark"></span>'))
+                    .append($('<p class="option_label">'+options[option_key]+'</p>')))
     }
-    options_form.append('<input type="submit" value="Send hums">')
+    options_form.append('<input type="submit" value="Send hums">');
 
-    send_hums(q_id, "0101");
+    //send_hums(q_id, "0101");
 
 })
 
-function send_hums(q_id, vote){
-    socket.emit("new_hum", {r_id: r_id, q_id: q_id, "vote": vote});
+function send_hums(event, q_id, vote){
+    alert(event + q_id + vote);
+    //socket.emit("new_hum", {r_id: r_id, q_id: q_id, "vote": vote});
+    return false;
 }
 
 
