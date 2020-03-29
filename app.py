@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, make_response, request, abort
+from flask import Flask, render_template, request, redirect, make_response, request, abort, send_file
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 import random
 from models.classes import Room
 from models.functions import get_random_url
 import time
+import os
 
 from threading import Timer
 import queue
@@ -67,6 +68,16 @@ def create_room():
         return redirect('/admin/'+r_admin_id)
     else:
         return redirect('/')
+
+@app.route('/json_files/<r_id>/<file_name>')
+def rediret_json(r_id, file_name):
+    
+    print(r_id, file_name)
+    if r_id in rooms:
+        path = os.path.join("json_files", r_id, file_name)
+        return send_file(path, as_attachment=True)
+    else:
+        return abort(404)
 
 
 @app.errorhandler(404)
@@ -184,14 +195,40 @@ def new_hum(data):
     r_id, q_id, vote = data["r_id"], data["q_id"], data["vote"]
     user_sid = request.sid
     user_answerd_sid_list = rooms[r_id].questions[q_id].user_answerd_list
+    q_status = rooms[r_id].questions[q_id].status
 
-    # Make sure the user did not hummed
-    if user_sid not in user_answerd_sid_list:
+    # Make sure the user did not hummed and its possible to answer
+    if (user_sid not in user_answerd_sid_list) and (q_status ==  "voting"):
         rooms[r_id].update_hum(q_id, vote)
         user_answerd_sid_list.append(request.sid)
         rooms[r_id].questions[q_id].num_users_voted += 1
         num_users_voted =  rooms[r_id].questions[q_id].num_users_voted
         emit("hum_update", {"num_users_voted": num_users_voted} ,room=r_id)
+
+
+@socketio.on("get_json")
+def get_json(data):
+    # This function receives a JSON request and return a link to this json
+    
+    r_id = data["r_id"]
+    user_sid = request.sid
+
+    file_name = rooms[r_id].create_json()
+    emit("json_recived", {"file_name": file_name}, room=user_sid)
+
+
+
+@socketio.on("close_room")
+def close_room(data):
+    # This function receives a closing request, closes the room and sends a confirmation
+
+    r_id, admin_r_id = data["r_id"], data["admin_r_id"]
+
+    # Confirms the message
+    if admin_rooms_dict[admin_r_id] == r_id:
+        rooms[r_id].close_room()
+        emit("room_closed", room=r_id)
+
 
 
 if __name__ == "__main__":

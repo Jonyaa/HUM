@@ -68,6 +68,33 @@ discard_q.click(function() {
 })
 
 
+function download_json(event){
+    // This function sends a request to the JSON file and downloads it
+    socket.emit("get_json", {r_id: r_id});
+    socket.on("json_recived", function(data) {
+        var file_name = data.file_name;
+        var file_url = window.location.host + "\\" + file_name;
+     
+        // Should fir it  VV
+        window.open(file_url, 'Download');
+    })
+
+}
+
+function close_room(event){
+    // This function send the server closing request and when it gets a confirmation message 
+    //    it redicts the user the main screen
+
+    admin_r_id = location.href.split("/").slice(-1); 
+    socket.emit("close_room", {r_id: r_id, admin_r_id: admin_r_id[0]});
+    
+    socket.on("room_closed", function(data) {
+        console.log("Room closed");
+        window.location.href = window.location.host;
+    })
+
+}
+
 function add_question(event) {
     // The functions that runs whenever one clicks the "add question" button
     event.preventDefault();
@@ -146,8 +173,6 @@ socket.on("voting_started", function(data) {
     }
     options_wrapper.append('<button class="place_vote_btn" onclick="send_hums(this)">SEND VOTE</button>');
 
-    //send_hums(q_id, "0101");
-
 })
 
 function send_hums(obj) {
@@ -216,3 +241,5 @@ function copy_url(element) {
 
 
   // To do:
+  // 1. Fix redirecting method in close_room()
+  // 2. Fix redirecting method in download_json()

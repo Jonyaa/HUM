@@ -18,3 +18,15 @@ input:focus {
     border: none;
     outline: none;
 }
+
+footer {
+    position: absolute;
+    width: 100%;
+    padding: 10px;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    color: white;
+    font-size: 12px;
+    box-sizing: border-box;
+}

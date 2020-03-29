@@ -102,8 +102,15 @@ class Room:
         # Dictionary to json object
         json_object = json.dumps(json_object)
 
+        folder_name = self.id
+        folder_path =  os.path.join(json_folder, folder_name)
+
+        # If folder doesnt exist, create it
+        if not os.path.isdir(folder_path):
+            os.mkdir(folder_path)
+
         file_name = "{}_{}.json".format(self.id, time.time())
-        file_name = os.path.join(json_folder, file_name)
+        file_name = os.path.join(folder_path, file_name)
 
         #Create the json file
         with open(file_name, "w") as f:

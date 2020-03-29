@@ -1,5 +1,5 @@
 div.wrapper {
-    height: 100vh;
+    height: calc(100vh - 30px);
     width: 100%;
     display: flex;
     flex-flow: column;
@@ -58,6 +58,8 @@ div.q_child {
     justify-content: flex-start;
     align-items: flex-start;
     overflow-y: scroll;
+
+    border-radius: 5px;
 }
 
 div.pending_questions_wrap {
