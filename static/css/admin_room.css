@@ -39,6 +39,28 @@ img.logo {
     right: 30px;
 }
 
+
+.md_btn {
+    background-color: var(--yellow-hl);
+    padding: 7px;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+    margin: 3px;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.md_btn:hover {
+    box-shadow: 0px 0px 0px 2px darkgoldenrod;
+}
+
+.md_btn:active, .md_btn:focus {
+    border: none;
+    outline: none;
+}
+
 section.questions {
     padding: 10px 5px;
     display: flex;
@@ -85,6 +107,7 @@ div.pending_questions_wrap {
     margin: 5px 0;
     width: 100%;
     position: relative;
+    border-radius: 3px;
 }
 
 .next_add_question {
@@ -189,10 +212,12 @@ div.pending_questions_wrap {
 
 .options_wrapper button:active {
     border: none;
+    outline: none;
 }
 
 .finished_question {
     border: 3px solid black;
+    border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
     width: 100%;
