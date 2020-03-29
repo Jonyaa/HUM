@@ -73,10 +73,8 @@ function download_json(event){
     socket.emit("get_json", {r_id: r_id});
     socket.on("json_recived", function(data) {
         var file_name = data.file_name;
-        var file_url = window.location.host + "\\" + file_name;
-     
-        // Should fir it  VV
-        window.open(file_url, 'Download');
+        var file_url = location.origin + "\\" + file_name;
+        window.open(file_url, '_blank');
     })
 
 }
@@ -90,7 +88,7 @@ function close_room(event){
     
     socket.on("room_closed", function(data) {
         console.log("Room closed");
-        window.location.href = window.location.host;
+        location.href = location.origin;
     })
 
 }

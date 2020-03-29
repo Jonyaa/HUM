@@ -5,6 +5,7 @@ from models.classes import Room
 from models.functions import get_random_url
 import time
 import os
+import glob
 
 from threading import Timer
 import queue
@@ -42,12 +43,22 @@ def enter_admin_room(admin_r_id):
         expiry_duration = rooms[r_id].time - time.time()
         for r_id in rooms:
             if admin_r_id == rooms[r_id].admin_id:
-                pending_q_dict = rooms[r_id].pending_questions_list()
-                finished_q_dict = rooms[r_id].finished_questions_list()
-                print(finished_q_dict)
-                return render_template('admin_room.html', title="HUM - Admin",
-                    room=rooms[r_id], expiry_duration = expiry_duration, pending_q_dict = pending_q_dict,
-                    finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions))
+
+                # Return latest json if the room is closed
+                if rooms[r_id].room_status == "closed":
+                    files_path = os.path.join("json_files", r_id, '*')
+                    files = sorted(
+                        glob.iglob(files_path), key=os.path.getctime, reverse=True) 
+                    path = files[0]
+                    print("path\n:", "json_files", r_id,)
+                    return send_file(path, as_attachment=True)
+                else:
+                    pending_q_dict = rooms[r_id].pending_questions_list()
+                    finished_q_dict = rooms[r_id].finished_questions_list()
+                    print(finished_q_dict)
+                    return render_template('admin_room.html', title="HUM - Admin",
+                        room=rooms[r_id], expiry_duration = expiry_duration, pending_q_dict = pending_q_dict,
+                        finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions))
     except:
         abort(404)
 

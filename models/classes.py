@@ -2,7 +2,7 @@ import time
 import json
 import os
 
-VOTING_DURATION = 1 # 180 Seconds
+VOTING_DURATION = 30 # 180 Seconds
 SILENCE     = 0
 WEAK_HUM    = 20
 MEDIUM_HUM  = 70
@@ -109,7 +109,7 @@ class Room:
         if not os.path.isdir(folder_path):
             os.mkdir(folder_path)
 
-        file_name = "{}_{}.json".format(self.id, time.time())
+        file_name = "HUM_{}_{}.json".format(self.id, time.time())
         file_name = os.path.join(folder_path, file_name)
 
         #Create the json file
