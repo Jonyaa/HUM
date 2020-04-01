@@ -10,11 +10,11 @@
 
 <div class="wrapper">
     <section class="metadata">
-        <img src="../static/img/svg/logo_white.svg" alt="LOGO" class="logo">
+        <a href="https://www.ietf.org/" target="_blank"><img src="../static/img/svg/logo_white.svg" alt="LOGO" class="logo"></a>
         <div class="md_text_wrap"> <!-- "md" for metadata -->
             <h2 class="md_text">ROOM NAME: <span id="room_name">{{room.name}}</span></h2>
-            <h2 class="md_text">ROOM USER URL: <span id="room_user_url">{{room.id}}</span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy" onclick="copy_url('#room_user_url')"> </h2>
-            <h2 class="md_text">ROOM ADMIN URL: <span id="room_admin_url"></span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy" onclick="copy_url('#room_admin_url')"></h2>
+            <h2 class="md_text">ROOM USER URL: <span id="room_user_url">{{room.id}}</span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy" onclick="copy_url('#room_user_url', event)"> </h2>
+            <h2 class="md_text">ROOM ADMIN URL: <span id="room_admin_url"></span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy" onclick="copy_url('#room_admin_url', event)"></h2>
             <h2 class="md_text">ROOM LIFETIME: <span id="room_lifetime"></span></h2>
             <h2 class="md_text">TOTAL CONNECTED: <span id="total_connected"></span></h2>
             <h2 class="md_text">TOTAL UNIQUE IPS: <span id="total_unique_ips"></span></h2>
@@ -83,6 +83,8 @@
         </form>
     </div>
 </div>
+
+<p id="copy_alert">Link copied to clipboard</p>
 
 <script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"; var this_question_id = "{{num_questions}}"</script>
 

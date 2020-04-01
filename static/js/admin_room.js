@@ -66,6 +66,11 @@ add_q_btn.click(function() {
 discard_q.click(function() {
     q_form.toggleClass("show");
 })
+document.addEventListener("keydown", function (e) {
+    if (e.keyCode == 27 && q_form.hasClass("show")) {
+        q_form.toggleClass("show");
+    }
+})
 
 
 function download_json(event){
@@ -224,17 +229,20 @@ socket.on("humming_finished", function(data) {
     $(".total_votes").remove();
     $(".vote_timer").remove();
     $(".humming_form").remove();
+    $(".options_wrapper").remove();
             
 })
 
 
 // The function that copies the user url to clipboard
-function copy_url(element) {
+function copy_url(element, event) {
     var $temp = $("<input>");
     $("body").append($temp);
     $temp.val($(element).text()).select();
     document.execCommand("copy");
     $temp.remove();
+    var x = event.pageX, y = event.pageY;
+    $("#copy_alert").css({"left": x+15+'px', "top": y-15+"px"}).fadeIn(200).delay(1000).fadeOut(200);
   }
 
 

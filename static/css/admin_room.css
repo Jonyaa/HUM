@@ -170,6 +170,7 @@ div.pending_questions_wrap {
 
 .options_wrapper {
     align-self: flex-start;
+    display: none;
 }
 
 .vote_option_container {
@@ -310,4 +311,13 @@ form.add_question_form input[type=submit] {
     width: 50%;
 }
 
-
+#copy_alert {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: darkgoldenrod;
+    font-size: 12px;
+    padding: 6px;
+    display: none;
+    pointer-events: none;
+}
