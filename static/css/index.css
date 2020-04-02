@@ -18,7 +18,11 @@ img.logo {
 
 p.info {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 12pt;
+}
+
+span.bold{
+    font-weight: bold;
 }
 
 section.right {

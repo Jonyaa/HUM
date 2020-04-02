@@ -30,3 +30,19 @@ footer {
     font-size: 12px;
     box-sizing: border-box;
 }
+
+.github-logo{
+    position: absolute;
+    right: 20px;
+    top: 3px;
+    width: 30px;
+}
+
+.github-logo:hover {
+    position: absolute;
+    right: 20px;
+    top: 3px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: var(--yellow-hl);
+}

@@ -14,6 +14,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
+js_version = 1 # Force client to download new JS when version changed
+
 
 rooms = {} # {room id: room object}
 admin_rooms_dict = {} # {admin_r_number: r_number}
@@ -29,18 +31,34 @@ def index():
 @app.route('/room/<r_id>')
 def enter_room(r_id):
     if r_id in rooms:
-        return render_template('client_room.html', title="HUM - " + rooms[r_id].name,room=rooms[r_id])
-    else:
-        return abort(404)
+        try:
+            expiry_duration = rooms[r_id].time - time.time()
+            room_name = rooms[r_id].name
+            # Return latest json if the room is closed
+            if rooms[r_id].room_status == "closed":
+                files_path = os.path.join("json_files", r_id, '*')
+                files = sorted(
+                    glob.iglob(files_path), key=os.path.getctime, reverse=True) 
+                path = files[0]
+                print("path\n:", "json_files", r_id,)
+                return send_file(path, as_attachment=True)
+            else:
+                pending_q_dict = rooms[r_id].pending_questions_list()
+                finished_q_dict = rooms[r_id].finished_questions_list()
+                print(finished_q_dict)
+                return render_template('client_room.html', title="HUM - {}".format(room_name),
+                    room=rooms[r_id], expiry_duration = expiry_duration, pending_q_dict = pending_q_dict,
+                    finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions), js_version=js_version)
+        except:
+            abort(404)
 
 
 @app.route('/admin/<admin_r_id>')
 def enter_admin_room(admin_r_id):
-    print(rooms["a"].pending_questions_list())
-
     try:
         r_id = admin_rooms_dict[admin_r_id]
         expiry_duration = rooms[r_id].time - time.time()
+        room_name = rooms[r_id].name
         for r_id in rooms:
             if admin_r_id == rooms[r_id].admin_id:
 
@@ -56,9 +74,9 @@ def enter_admin_room(admin_r_id):
                     pending_q_dict = rooms[r_id].pending_questions_list()
                     finished_q_dict = rooms[r_id].finished_questions_list()
                     print(finished_q_dict)
-                    return render_template('admin_room.html', title="HUM - Admin",
+                    return render_template('admin_room.html', title="HUM - Admin - {}".format(room_name),
                         room=rooms[r_id], expiry_duration = expiry_duration, pending_q_dict = pending_q_dict,
-                        finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions))
+                        finished_q_dict = finished_q_dict, num_questions = len(rooms[r_id].questions), js_version=js_version)
     except:
         abort(404)
 
@@ -68,7 +86,7 @@ def create_room():
     if request.method == "POST":
         # Get from form the room name and room expiry (if filled, else just put "6" - default hours number)
         r_name = request.form.get('r_name')
-        r_expiry = request.form.get('r_expiry') if request.form.get('r_expiry') else "6"
+        r_expiry = request.form.get('r_expiry') if (request.form.get('r_expiry') and request.form.get('r_expiry').isdigit() ) else "6"
         
         #Hours to minutes
         time_end = (time.time() + (int(r_expiry) * 3600))
@@ -158,6 +176,16 @@ def admin_new_question(data):
     emit("new_question_update", message_content, room=r_id)
     print("New question recived from room: ", r_id)
 
+@socketio.on("admin_deleted_question")
+def admin_deleted_question(data):
+    # Change object status and update users
+
+    r_id, q_id = data["r_id"], data["q_id"]
+    rooms[r_id].delete_question(q_id)
+    emit("question_deleted", {"q_id": q_id}, room=r_id)
+    print("question_deleted:", q_id)
+
+
 @socketio.on("admin_published_question")
 def admin_published_question(data):
     # Change object status and update users
@@ -239,6 +267,7 @@ def close_room(data):
     if admin_rooms_dict[admin_r_id] == r_id:
         rooms[r_id].close_room()
         emit("room_closed", room=r_id)
+        print("r_id:", r_id)
 
 
 
@@ -246,5 +275,8 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 8000, debug=True)
 
 # To Do:
-# 1. Redirect closed room to its JSON file.
-# 2. Save JSON files
+
+## Admin Room ##
+# 1. Option 4 default when creating a question: Don't have enough information
+# 2. Ask for confirmation before closing a room
+# 3. Change "send to vote" button

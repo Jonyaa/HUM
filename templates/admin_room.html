@@ -37,7 +37,7 @@
                         {% endfor %}
                     </div>
                     <img src="../static/img/svg/next2.svg" class="next_add_question" onclick="put_on_vote(this)">
-                    <img src="../static/img/svg/trash.svg" class="trash_question">
+                    <img src="../static/img/svg/trash.svg" class="trash_question" onclick='delete_question(this)'>
                 </div>
                 {% endfor %}
                 {% endif %}
@@ -88,5 +88,5 @@
 
 <script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"; var this_question_id = "{{num_questions}}"</script>
 
-<script src="{{ url_for('static', filename='js/admin_room.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin_room.js') }}?{{ js_version }}"></script>
 {% endblock %}

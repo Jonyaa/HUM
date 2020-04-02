@@ -7,6 +7,63 @@
 
 
 {% block body %}
-<script>var r_id = "{{ room.id }}";</script>
+<div class="wrapper">
+    <section class="metadata">
+        <a href="https://www.ietf.org/" target="_blank"><img src="../static/img/svg/logo_white.svg" alt="LOGO" class="logo"></a>
+        <div class="md_text_wrap"> <!-- "md" for metadata -->
+            <h2 class="md_text">ROOM NAME: <span id="room_name">{{room.name}}</span></h2>
+            <h2 class="md_text">ROOM LIFETIME: <span id="room_lifetime"></span></h2>
+            <h2 class="md_text">TOTAL CONNECTED: <span id="total_connected"></span></h2>
+            <h2 class="md_text">TOTAL UNIQUE IPS: <span id="total_unique_ips"></span></h2>
+        </div>
+        <button onclick="download_json()" id="download_json_btn" class="md_btn">Donwload JSON</button>
+    </section>
+
+    <section class="questions">
+        <div class="q_child" id="pending_questions">
+            <h2>PENDING QUESTIONS:</h2>
+            <div class="pending_questions_wrap">
+                {% if pending_q_dict %} <!-- Only if there are already pending questions in the server -->
+                {% for q in pending_q_dict %}
+                <div class="pending_question" id="{{ q }}">
+                    <h3 class="question">{{ pending_q_dict[q].question }}</h3>
+                    <div class="pending_question_options">
+                        {% for opt in pending_q_dict[q].options %}
+                        <h5 class="option">{{ opt + 1 }} . {{ pending_q_dict[q].options[opt] }}</h5>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div> <!-- That's the div that will hold all pending questions -->
+        </div>
+        <div class="q_child" id="on_vote">
+            <h2>ON VOTE:</h2>
+            <div class="on_vote_question">
+            </div>
+        </div>
+        <div class="q_child" id="finished_voting">
+            <h2>FINISHED VOTING:</h2>
+            {% if finished_q_dict %} <!-- Only if there are already pending questions in the server -->
+            {% for q in finished_q_dict %}
+                <div class="finished_question">
+                    <h3 class="question">{{ finished_q_dict[q].question }}</h3>
+                    {% for opt in finished_q_dict[q].options %}
+                    <h3 class="finished_option">{{ finished_q_dict[q].options[opt] }} - 
+                        
+                        <span class="option_hum">  {{ finished_q_dict[q].results[loop.index] }}  </span>
+                    </h3>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+
+<p id="copy_alert">Link copied to clipboard</p>
+
+<script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"; var this_question_id = "{{num_questions}}"</script>
 <script src="{{ url_for('static', filename='js/client_room.js') }}"></script>
 {% endblock %}

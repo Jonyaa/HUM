@@ -14,7 +14,12 @@
 <body>
     {% block body %}
     {% endblock %}
-    <footer><p class="copywrite">© Jonathan Yaari Barzilay & Amir Sheffer, 2020</p></footer>
+    <footer>
+        <p class="copywrite">© Jonathan Yaari Barzilay & Amir Sheffer, 2020</p>
+        <a href="https://github.com/Jonyaa/HUM/" target="_blank">
+            <img src="../static/img/GitHub-Mark-Light-64px.png" alt="github-LOGO" class="github-logo" />
+        </a>
+    </footer>
     <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
 </body>
 </html>

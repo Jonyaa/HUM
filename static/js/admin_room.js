@@ -14,8 +14,6 @@ const user_url = $("#room_user_url"),
     total_connected_p = $("#total_connected"),
     total_uniqe_ip_p = $("#total_unique_ips"),
     room_lifetime_p = $("#room_lifetime");
-//var this_question_id = 0
-console.log("This q_id: " + this_question_id)
     
 
 socket.on('user_status_update', function(data){
@@ -38,13 +36,19 @@ function startTimer(duration, display) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.text( hours + ":" + minutes + ":" + seconds);
+        // Display second only if less than hour left
+        if (duration < 3600){
+            display.text( minutes + ":" + seconds);
+        } else {
+            display.text( hours + ":" + minutes);
+        }
 
         if (--timer < 0) {
             timer = duration;
         }
     }, 1000);
 }
+
 
 $(document).ready(function() {
 
@@ -135,7 +139,7 @@ socket.on("new_question_update", function(data) {
                 return res;
             }))
         .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
-        .append($("<img src='../static/img/svg/trash.svg' class='trash_question'>"))
+        .append($("<img src='../static/img/svg/trash.svg' class='trash_question' onclick='delete_question(this)'>"))
     )
 })
 
@@ -144,6 +148,19 @@ function put_on_vote(e) {
     var q_id = e.parentNode.id;
     socket.emit("admin_published_question", {r_id: r_id, q_id: q_id});
 }
+
+function delete_question(e) {
+    console.log("h");
+    var q_id = e.parentNode.id;
+    socket.emit("admin_deleted_question", {r_id: r_id, q_id: q_id});
+}
+
+socket.on("question_deleted", function(data) {
+    var q_id = data.q_id;
+    question_div = $("#"+q_id+".pending_question");
+    question_div.remove()
+});
+
 
 socket.on("voting_started", function(data) {
     var q_id = data.q_id,
@@ -245,7 +262,3 @@ function copy_url(element, event) {
     $("#copy_alert").css({"left": x+15+'px', "top": y-15+"px"}).fadeIn(200).delay(1000).fadeOut(200);
   }
 
-
-  // To do:
-  // 1. Fix redirecting method in close_room()
-  // 2. Fix redirecting method in download_json()

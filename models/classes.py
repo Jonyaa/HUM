@@ -26,6 +26,10 @@ class Room:
         # Add question to the room object
         # rooms[id].add_question(1, "How much?", "description", ["yes", "no", "maybe"])
         self.questions[question_id] = Question(question, desc, options)
+
+    def delete_question(self, q_id):
+        # Set question status = "Delete" question 
+        self.questions[q_id].status = "deleted"
     
     def update_hum(self, question_id, vote): # vote = "1010" 
         # This function update the hums total for each hums recived from user
@@ -95,13 +99,22 @@ class Room:
 
         # Insert each question data into json
         for q in self.questions:
-            q_object = json.dumps(self.questions[q].__dict__)
+            q_obj = self.questions[q]
+            q_object = {
+                "question": q_obj.question,
+                "desc": q_obj.desc,
+                "status": q_obj.status,
+                "time_starte": q_obj.time_started,
+                "time_end": q_obj.time_end,
+                "options": q_obj.options,
+                "q_results": q_obj.q_results
+            }
             q_dict[q] = q_object
-        json_folder = "json_files"
 
         # Dictionary to json object
         json_object = json.dumps(json_object)
 
+        json_folder = "json_files"
         folder_name = self.id
         folder_path =  os.path.join(json_folder, folder_name)
 
@@ -133,6 +146,8 @@ class Question:
         self.num_users_voted = 0
         self.options = {}
         self.user_answerd_list = []
+        self.q_summery = [0, 0, 0, 0]
+        self.q_results = [0, 0, 0, 0]
         
         
         # Define options dictionary
@@ -141,8 +156,6 @@ class Question:
         self.total_hums = [0, 0, 0, 0] # [2,14,0,0] Means that option 1 fot 2 hums, option 2 got 14 hums
     
     def calculate_hums(self):
-        self.q_summery = [0, 0, 0, 0]
-        self.q_results = [0, 0, 0, 0]
 
         # Calculate the percentages of each hum out of total hums 
         for i in range(len(self.total_hums)):
