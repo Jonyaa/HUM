@@ -1,6 +1,6 @@
 # HUM
-Web app for Amir's dad
+Web app for IETF
 
-Dependencies:
-pip install flask
-pip install flask_socketio
+We reject kings, presidents and voting.
+We believe in rough consensus and running code.
+We believe in HUMs.
