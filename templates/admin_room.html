@@ -13,8 +13,8 @@
         <a href="https://www.ietf.org/" target="_blank"><img src="../static/img/svg/logo_white.svg" alt="LOGO" class="logo"></a>
         <div class="md_text_wrap"> <!-- "md" for metadata -->
             <h2 class="md_text">ROOM NAME: <span id="room_name">{{room.name}}</span></h2>
-            <h2 class="md_text">ROOM USER URL: <span id="room_user_url">{{room.id}}</span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy" onclick="copy_url('#room_user_url', event)"> </h2>
-            <h2 class="md_text">ROOM ADMIN URL: <span id="room_admin_url"></span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" class="copy" onclick="copy_url('#room_admin_url', event)"></h2>
+            <h2 class="md_text">ROOM USER URL: <span id="room_user_url">{{room.id}}</span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" title="copy to clipboard" class="copy" onclick="copy_url('#room_user_url', event)"> </h2>
+            <h2 class="md_text">ROOM ADMIN URL: <span id="room_admin_url"></span> <img src="../static/img/svg/copy.svg" alt="copy to clipboard" title="copy to clipboard" class="copy" onclick="copy_url('#room_admin_url', event)"></h2>
             <h2 class="md_text">ROOM LIFETIME: <span id="room_lifetime"></span></h2>
             <h2 class="md_text">TOTAL CONNECTED: <span id="total_connected"></span></h2>
             <h2 class="md_text">TOTAL UNIQUE IPS: <span id="total_unique_ips"></span></h2>
@@ -36,13 +36,13 @@
                         <h5 class="option">{{ opt + 1 }} . {{ pending_q_dict[q].options[opt] }}</h5>
                         {% endfor %}
                     </div>
-                    <img src="../static/img/svg/next2.svg" class="next_add_question" onclick="put_on_vote(this)">
-                    <img src="../static/img/svg/trash.svg" class="trash_question" onclick='delete_question(this)'>
+                    <img src="../static/img/svg/next.svg" class="next_add_question" onclick="put_on_vote(this)" title="Put on vote" alt="Put on vote">
+                    <img alt='Delete question' title='Delete question' src="../static/img/svg/trash.svg" class="trash_question" onclick='pop_delete_question(this)'>
                 </div>
                 {% endfor %}
                 {% endif %}
             </div> <!-- That's the div that will hold all pending questions -->
-            <img src="../static/img/svg/plus.svg" alt="add question" id="add_question">
+            <img src="../static/img/svg/plus.svg" alt="add question" id="add_question" alt="Add question" title="Add question">
         </div>
         <div class="q_child" id="on_vote">
             <h2>ON VOTE:</h2>
@@ -85,6 +85,18 @@
 </div>
 
 <p id="copy_alert">Link copied to clipboard</p>
+
+<div id="close_alert">
+    <h3>Do you really want to close the room?</h3>
+    <button class="yes_really" onclick="yes_really()">Yes</button>
+    <button class="not_really" onclick="close_room()">Cancel</button>
+</div>
+
+<div id="delete_alert">
+    <h3>Do you really want to delete the question: "<span id="delete_question_placeholder"></span>"?</h3>
+    <button class="yes_really" onclick="delete_question(this, event)">Yes</button>
+    <button class="not_really" onclick="cancel_deletion()">Cancel</button>
+</div>
 
 <script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"; var this_question_id = "{{num_questions}}"</script>
 

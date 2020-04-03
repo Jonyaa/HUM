@@ -321,3 +321,30 @@ form.add_question_form input[type=submit] {
     display: none;
     pointer-events: none;
 }
+
+#close_alert, #delete_alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--yellow-hl);
+    padding: 50px;
+    display: none;
+    pointer-events: none;
+}
+
+#close_alert.show, #delete_alert.show{
+    display: block;
+    pointer-events: unset;
+}
+
+#close_alert button, #delete_alert button{
+    padding: 7px;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+    margin: 20px 5px;
+    margin-bottom: 0;
+    font-size: 14px;
+}

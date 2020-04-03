@@ -46,3 +46,8 @@ footer {
     border-radius: 50%;
     background-color: var(--yellow-hl);
 }
+
+button:focus, button:active {
+    border: none;
+    outline: none;
+}

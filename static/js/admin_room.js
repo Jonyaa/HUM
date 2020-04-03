@@ -14,7 +14,8 @@ const user_url = $("#room_user_url"),
     total_connected_p = $("#total_connected"),
     total_uniqe_ip_p = $("#total_unique_ips"),
     room_lifetime_p = $("#room_lifetime");
-    
+
+var current_deleting_question = null;
 
 socket.on('user_status_update', function(data){
     total_connected_p.text(data["total_connections"]);
@@ -66,6 +67,8 @@ $(document).ready(function() {
 
 add_q_btn.click(function() {
     q_form.toggleClass("show");
+    console.log(add_form.children(".form_options").children().last());
+    add_form.children(".form_options").children().last().val("I don't have enough information.");
 })
 discard_q.click(function() {
     q_form.toggleClass("show");
@@ -88,7 +91,11 @@ function download_json(event){
 
 }
 
-function close_room(event){
+function close_room() {
+    $("#close_alert").toggleClass("show");
+}
+
+function yes_really(){
     // This function send the server closing request and when it gets a confirmation message 
     //    it redicts the user the main screen
 
@@ -99,7 +106,6 @@ function close_room(event){
         console.log("Room closed");
         location.href = location.origin;
     })
-
 }
 
 function add_question(event) {
@@ -138,21 +144,36 @@ socket.on("new_question_update", function(data) {
                 });
                 return res;
             }))
-        .append($("<img src='../static/img/svg/next2.svg' class='next_add_question' onclick='put_on_vote(this)'>"))
-        .append($("<img src='../static/img/svg/trash.svg' class='trash_question' onclick='delete_question(this)'>"))
+        .append($("<img src='../static/img/svg/next.svg' class='next_add_question' onclick='put_on_vote(this)' title='Put on vote' alt='Put on vote'>"))
+        .append($("<img alt='Delete question' title='Delete question' src='../static/img/svg/trash.svg' class='trash_question' onclick='pop_delete_question(this)'>"))
     )
 })
 
 
 function put_on_vote(e) {
-    var q_id = e.parentNode.id;
-    socket.emit("admin_published_question", {r_id: r_id, q_id: q_id});
+    console.log($(".on_vote_question").children());
+    if ($(".on_vote_question").children().length != 0) {
+        alert("Please wait until voting will finish");
+    } else {
+        var q_id = e.parentNode.id;
+        socket.emit("admin_published_question", {r_id: r_id, q_id: q_id});
+    }
 }
 
-function delete_question(e) {
-    console.log("h");
-    var q_id = e.parentNode.id;
-    socket.emit("admin_deleted_question", {r_id: r_id, q_id: q_id});
+function cancel_deletion() {
+    $("#delete_alert").toggleClass("show");
+}
+
+function pop_delete_question(question) {
+    current_deleting_question = question.parentNode.id;
+    console.log(current_deleting_question);
+    $("#delete_alert").toggleClass("show");
+    $("#delete_question_placeholder").html($(question).parent().children(".question").html());
+}
+
+function delete_question(obj, e) {
+    obj.parentElement.classList.toggle("show");
+    socket.emit("admin_deleted_question", {r_id: r_id, q_id: current_deleting_question});
 }
 
 socket.on("question_deleted", function(data) {
@@ -170,7 +191,7 @@ socket.on("voting_started", function(data) {
     
     $('.on_vote_question')
     .append($('<h3 class="question" id='+q_id+'>'+q+'</h3>'))
-    .append($('<h3 class="total_votes">TOTAL HUMS: 0</h3>'))
+    .append($('<h3 class="total_votes">TOTAL HUMS: <span id="total_votes_span">0</span></h3>'))
     .append($('<h3 class="vote_timer"></h3>'));
 
     // Voting timer
@@ -218,8 +239,8 @@ function send_hums(obj) {
 
 
 socket.on("hum_update", function(data) {
-    total_votes_h = $(".total_votes");
-    total_votes_h.text("Number of users who HUMed: " + data.num_users_voted);
+    total_votes_h = $("#total_votes_span");
+    total_votes_h.text(data.num_users_voted);
 })
 
 socket.on("humming_finished", function(data) {
