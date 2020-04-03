@@ -22,6 +22,9 @@ admin_rooms_dict = {} # {admin_r_number: r_number}
 rooms["a"] = Room("a", "a", time.time() + (6 * 3600), "b") # For test purpose only
 admin_rooms_dict["b"] = "a" # For test purpose only
 
+if not os.path.isdir('json_files'):
+    os.mkdir("json_files")
+
 @app.route('/')
 def index():
     return render_template('index.html', title="HUM")

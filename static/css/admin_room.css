@@ -85,7 +85,7 @@ div.q_child {
 }
 
 div.pending_questions_wrap {
-    overflow: scroll;
+    overflow-y: scroll;
     width: 100%;
 }
 
@@ -251,6 +251,8 @@ div.add_question_form_wrap {
     transform: translate(-50%, -50%);
     pointer-events: none;
     display: none;
+    box-shadow: 0px 0px 10px 0px rgba(156,154,156,0.5);
+    border-radius: 5px;
 }
 
 div.add_question_form_wrap.show {
@@ -336,6 +338,8 @@ form.add_question_form input[type=submit] {
 #close_alert.show, #delete_alert.show{
     display: block;
     pointer-events: unset;
+    box-shadow: 0px 0px 10px 0px rgba(156,154,156,0.5);
+    border-radius: 5px;
 }
 
 #close_alert button, #delete_alert button{

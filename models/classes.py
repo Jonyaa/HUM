@@ -90,7 +90,6 @@ class Room:
         json_object = {
             "json_creation_time": time.time(),
             "room_id": self.id,
-            "admin_room_id": self.admin_id,
             "room_name": self.name,
             "room_creation_time": self.creation_time,
             "questions": {}
@@ -102,9 +101,8 @@ class Room:
             q_obj = self.questions[q]
             q_object = {
                 "question": q_obj.question,
-                "desc": q_obj.desc,
                 "status": q_obj.status,
-                "time_starte": q_obj.time_started,
+                "time_start": q_obj.time_started,
                 "time_end": q_obj.time_end,
                 "options": q_obj.options,
                 "q_results": q_obj.q_results

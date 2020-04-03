@@ -85,7 +85,7 @@ div.q_child {
 }
 
 div.pending_questions_wrap {
-    overflow: scroll;
+    overflow-y: scroll;
     width: 100%;
 }
 
