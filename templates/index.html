@@ -9,26 +9,25 @@
 {% block body %}
 <section class="left">
     <img src="../static/img/svg/logo.svg" alt="logo" class="logo">
-    <p class="info">We reject kings, presidents and voting.</p>
-    <p class="info">We believe in rough consensus and running code.</p>
-    <p class="info">We believe in <span class="bold">HUMs</span>.</p>
+    <p class="info">We reject kings, presidents and voting. We believe in rough consensus and running code.</p>
+    <!--<p class="info">We believe in <span class="bold">HUMs</span>.</p>-->
 </section>
 <section class="right">
     <h1 class="title">HUM</h1>
     <div class="btn_wrapper">
-        <button class="room_btn" onclick="create_room_window()">CREATE A ROOM</button>
+        <button class="room_btn" onclick="create_room_window()">Create a Meeting...</button>
     </div>
     <div class="form_wrap">
         <img src="../static/img/svg/x.svg" alt="Close Panel" class="close_panel" onclick="create_room_window()">
         <form action="create_room" method="post" autocomplete="off" class="create_form">
             <div class="inputs_wrapper">
-                <input type="text" name="r_name" id="r_name" placeholder="ROOM NAME" required autofocus> <!-- "r" is for room -->
+                <input type="text" name="r_name" id="r_name" placeholder="Meeting Name" required autofocus> <!-- "r" is for room -->
                 <div class="expiry_wrap">
-                    <input type="text" name="r_expiry" id="r_expiry" placeholder="EXPIRY TIME (HOURS)">
+                    <input type="text" name="r_expiry" id="r_expiry" placeholder="Expiry (Hours)">
                     <label for="r_expiry">[ Default: 6 ]</label>
                 </div>
             </div>
-            <input type="submit" value="CREATE">
+            <input type="submit" value="Create">
         </form>
     </div>
 </section>

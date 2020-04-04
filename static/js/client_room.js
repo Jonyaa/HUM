@@ -104,7 +104,7 @@ socket.on("voting_started", function(data) {
     
     $('.on_vote_question')
     .append($('<h3 class="question" id='+q_id+'>'+q+'</h3>'))
-    .append($('<h3 class="total_votes">TOTAL HUMS: 0</h3>'))
+    .append($('<h3 class="total_votes">Total Hums: 0</h3>'))
     .append($('<h3 class="vote_timer"></h3>'));
 
     // Voting timer
@@ -125,7 +125,7 @@ socket.on("voting_started", function(data) {
                     .append($('<span class="checkmark"></span>'))
                     .append($('<p class="option_label">'+options[option_key]+'</p>')))
     }
-    options_wrapper.append('<button class="place_vote_btn" onclick="send_hums(this)">SEND VOTE</button>');
+    options_wrapper.append('<button class="place_vote_btn" onclick="send_hums(this)">Hum Now</button>');
 
 })
 
@@ -152,7 +152,7 @@ function send_hums(obj) {
 
 socket.on("hum_update", function(data) {
     total_votes_h = $(".total_votes");
-    total_votes_h.text("Number of users who HUMed: " + data.num_users_voted);
+    total_votes_h.text("Total Number of Hums: " + data.num_users_voted);
 })
 
 socket.on("room_closed", function(data) {

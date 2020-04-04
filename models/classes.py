@@ -2,7 +2,7 @@ import time
 import json
 import os
 
-VOTING_DURATION = 30 # 180 Seconds
+VOTING_DURATION = 180 # 180 Seconds
 SILENCE     = 0
 WEAK_HUM    = 20
 MEDIUM_HUM  = 70
@@ -89,9 +89,9 @@ class Room:
         # This function create json file with room data
         json_object = {
             "json_creation_time": time.time(),
-            "room_id": self.id,
-            "room_name": self.name,
-            "room_creation_time": self.creation_time,
+            "meeting_url": self.id,
+            "meeting_name": self.name,
+            "meeting_creation_time": self.creation_time,
             "questions": {}
         }
         q_dict = json_object["questions"]
@@ -105,7 +105,7 @@ class Room:
                 "time_start": q_obj.time_started,
                 "time_end": q_obj.time_end,
                 "options": q_obj.options,
-                "q_results": q_obj.q_results
+                "question_results": q_obj.q_results
             }
             q_dict[q] = q_object
 
@@ -167,8 +167,8 @@ class Question:
             if result <= SILENCE:
                 self.q_results[i] = "Silence"
             if WEAK_HUM >= result > SILENCE:
-                self.q_results[i] = "Weak HUM"
+                self.q_results[i] = "Weak Hum"
             if MEDIUM_HUM >= result > WEAK_HUM:
-                self.q_results[i] = "Medium HUM"
+                self.q_results[i] = "Medium Hum"
             if STRONG_HUM >= result > MEDIUM_HUM:
-                self.q_results[i] = "Strong HUM!"
+                self.q_results[i] = "Strong Hum!"

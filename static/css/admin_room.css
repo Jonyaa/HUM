@@ -26,6 +26,14 @@ h2.md_text span{
     font-weight: 900;
 }
 
+#room_user_url{
+    font-weight: 400;
+}
+
+#room_admin_url{
+    font-weight: 400;
+}
+
 img.copy {
     cursor: pointer;
     margin-left: 4px;
@@ -302,7 +310,7 @@ form.add_question_form input[type=submit] {
 
 .form_actions > img {
     height: 50px;
-    margin-left: 10px;
+    margin-left: 20px;
     cursor: pointer;
 }
 

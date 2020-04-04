@@ -191,7 +191,7 @@ socket.on("voting_started", function(data) {
     
     $('.on_vote_question')
     .append($('<h3 class="question" id='+q_id+'>'+q+'</h3>'))
-    .append($('<h3 class="total_votes">TOTAL HUMS: <span id="total_votes_span">0</span></h3>'))
+    .append($('<h3 class="total_votes">Total Hums: <span id="total_votes_span">0</span></h3>'))
     .append($('<h3 class="vote_timer"></h3>'));
 
     // Voting timer

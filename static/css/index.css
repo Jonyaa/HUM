@@ -36,6 +36,7 @@ section.right {
     align-items: center;
     align-content: center;
     flex-direction: column;
+    text-align: left;
     position: relative;
 }
 
