@@ -1,4 +1,5 @@
 import time
+import datetime
 import json
 import os
 
@@ -7,6 +8,7 @@ SILENCE     = 0
 WEAK_HUM    = 20
 MEDIUM_HUM  = 70
 STRONG_HUM  = 100
+
 
 class Room:
     def __init__(self, id, name, expiry_time, admin_id):
@@ -48,7 +50,7 @@ class Room:
         # This function update question status from "voting" to finish
         # And calls the function that calculates the results
         self.questions[question_id].calculate_hums()
-        self.questions[question_id].status = "finished"
+        self.questions[question_id].status = "completeded"
     
     def pending_questions_list(self):
         # Create pending list for page rendering
@@ -74,7 +76,7 @@ class Room:
         # Iterate each question in questions dict
         for q in self.questions:
             q_object = self.questions[q]
-            if q_object.status == "finished":
+            if q_object.status == "completeded":
                 finished_list[q] = {}
                 finished_list[q]["question"] = q_object.question
                 finished_list[q]["options"] = q_object.options
@@ -87,27 +89,32 @@ class Room:
 
     def create_json(self):
         # This function create json file with room data
+
+        creation_time_datetime =  datetime.datetime.fromtimestamp(self.creation_time)
         json_object = {
-            "json_creation_time": time.time(),
-            "meeting_url": self.id,
+            "json_creation_time": datetime.datetime.now().replace(microsecond=0).isoformat(),
+            "meeting_url": "humming.us/room/" + self.id,
             "meeting_name": self.name,
-            "meeting_creation_time": self.creation_time,
-            "questions": {}
+            "meeting_creation_time": creation_time_datetime.replace(microsecond=0).isoformat(),
+            "questions": []
         }
-        q_dict = json_object["questions"]
+        q_list = json_object["questions"]
 
         # Insert each question data into json
         for q in self.questions:
             q_obj = self.questions[q]
-            q_object = {
-                "question": q_obj.question,
-                "status": q_obj.status,
-                "time_start": q_obj.time_started,
-                "time_end": q_obj.time_end,
-                "options": q_obj.options,
-                "question_results": q_obj.q_results
-            }
-            q_dict[q] = q_object
+
+            # Don't save any completed question
+            if q_obj.status != "completeded":
+                q_object = {
+                    "question": q_obj.question,
+                    "status": q_obj.status,
+                    "time_start": q_obj.time_started,
+                    "time_end": q_obj.time_end,
+                    "options": q_obj.options,
+                    "question_results": q_obj.q_results
+                }
+                q_list.append(q_object)
 
         # Dictionary to json object
         json_object = json.dumps(json_object)

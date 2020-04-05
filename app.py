@@ -11,10 +11,9 @@ from threading import Timer
 import queue
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-js_version = 1 # Force client to download new JS when version changed
+js_version = 2 # Force client to download new JS when version changed
 
 
 rooms = {} # {room id: room object}

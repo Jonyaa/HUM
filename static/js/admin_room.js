@@ -153,11 +153,15 @@ socket.on("new_question_update", function(data) {
 function put_on_vote(e) {
     console.log($(".on_vote_question").children());
     if ($(".on_vote_question").children().length != 0) {
-        alert("Please wait until voting will finish");
+        $("#message_alert").toggleClass("show");
     } else {
         var q_id = e.parentNode.id;
         socket.emit("admin_published_question", {r_id: r_id, q_id: q_id});
     }
+}
+
+function OK() {
+    $("#message_alert").toggleClass("show");
 }
 
 function cancel_deletion() {

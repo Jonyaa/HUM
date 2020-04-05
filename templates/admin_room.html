@@ -99,6 +99,12 @@
     <button class="not_really" onclick="cancel_deletion()">Cancel</button>
 </div>
 
+<div id="message_alert">
+    <h3>Please wait until voting will finish</h3>
+    <button class="ok_alert" onclick="OK()">OK</button>
+</div>
+
+
 <script>var r_id = "{{ room.id }}"; var expiry_duration = "{{expiry_duration}}"; var this_question_id = "{{num_questions}}"</script>
 
 <script src="{{ url_for('static', filename='js/admin_room.js') }}?{{ js_version }}"></script>
