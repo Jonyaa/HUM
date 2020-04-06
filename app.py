@@ -277,6 +277,6 @@ if __name__ == "__main__":
     # If running on server use ssl
     if os.path.isfile("./privkey.pem"):
         context = ('fullchain.pem', 'privkey.pem')#certificate and key files
-        app.run(host="0.0.0.0", debug=True, ssl_context=context)
+        app.run(host="0.0.0.0", port = 443, debug=True, ssl_context=context)
     else:
         app.run(host="0.0.0.0", port = 8000, debug=True)
