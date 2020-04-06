@@ -258,7 +258,6 @@ def get_json(data):
     emit("json_recived", {"file_name": file_name}, room=user_sid)
 
 
-
 @socketio.on("close_room")
 def close_room(data):
     # This function receives a closing request, closes the room and sends a confirmation
@@ -274,11 +273,10 @@ def close_room(data):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port = 8000, debug=True)
 
-# To Do:
-
-## Admin Room ##
-# 1. Option 4 default when creating a question: Don't have enough information
-# 2. Ask for confirmation before closing a room
-# 3. Change "send to vote" button
+    # If running on server use ssl
+    if os.path.isfile("./local.crt"):
+        context = ('fullchain.pem', 'privkey.pem')#certificate and key files
+        app.run(host="0.0.0.0", debug=True, ssl_context=context)
+    else:
+        app.run(host="0.0.0.0", port = 8000, debug=True)
